@@ -1,0 +1,7 @@
+server:
+  url: https://geth-api.hoqu.io
+geth:
+  endpoint: /home/node/.ethereum/geth.ipc
+  main:
+    key_file: data/keys/main
+    pass: store_key_in_local_config

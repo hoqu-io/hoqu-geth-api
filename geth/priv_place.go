@@ -1,0 +1,42 @@
+package geth
+
+import (
+    "hoqu-geth-api/contract"
+    "github.com/ethereum/go-ethereum/common"
+    "github.com/spf13/viper"
+    "errors"
+    "fmt"
+    "hoqu-geth-api/sdk/geth"
+)
+
+var privPlace *PrivatePlacement
+
+type PrivatePlacement struct {
+    *geth.Contract
+    PrivatePlacement *contract.PrivatePlacement
+}
+
+func InitPrivatePlacement() error {
+    c := geth.NewContract(viper.GetString("geth.addr.privPlace"))
+    c.InitEvents(contract.ClaimableCrowdsaleABI)
+
+    pp, err := contract.NewPrivatePlacement(c.Address, c.Wallet.Connection)
+    if err != nil {
+        return errors.New(fmt.Sprintf("Failed to instantiate a PrivatePlacement contract: %v", err))
+    }
+
+    privPlace = &PrivatePlacement{
+        Contract: c,
+        PrivatePlacement: pp,
+    }
+
+    return nil
+}
+
+func GetPrivatePlacement() *PrivatePlacement {
+    return privPlace
+}
+
+func (t *PrivatePlacement) TokenAddr() (common.Address, error) {
+    return t.PrivatePlacement.Token(nil)
+}

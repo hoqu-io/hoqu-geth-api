@@ -1,0 +1,8 @@
+server:
+  port: 8888
+  url: http://geth-api-test.hoqu.io
+geth:
+  endpoint: https://rinkeby.infura.io
+  main:
+    key_file: data/keys/testnet_main
+    pass: nhbybnb123

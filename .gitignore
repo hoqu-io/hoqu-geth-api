@@ -1,0 +1,11 @@
+.idea
+vendor/*
+!vendor/vendor.json
+config/local.yaml
+hoqu-geth-api*
+sol/zeppelin-solidity/contracts/*
+!sol/zeppelin-solidity/contracts/readme.md
+data/keys/*
+!data/keys/testnet*
+sol/*
+!sol/readme.md
