@@ -5,31 +5,25 @@ import (
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
     "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/sdk/http/middleware"
 )
 
 func initPresaleRoutes(router *gin.Engine)  {
     presale := router.Group("/presale")
     {
-        presale.POST("/deploy", postDeployAction)
+        presale.POST("/deploy", middleware.SignRequired(), postDeployAction)
         presale.GET("/summary", getSummaryAction)
         presale.GET("/balance/:address", getClaimableTokensBalanceAction)
         presale.POST("/balances", postClaimableTokensBalancesAction)
         presale.GET("/approved/:address", getApprovedAction)
         presale.POST("/approved", postApprovedManyAction)
         presale.POST("/transactions", postPresaleTransactionsAction)
-        presale.POST("/add", postAddAction)
-        presale.POST("/approve", postApproveAction)
+        presale.POST("/add", middleware.SignRequired(), postAddAction)
+        presale.POST("/topup", middleware.SignRequired(), postTopUpAction)
+        presale.POST("/approve", middleware.SignRequired(), postApproveAction)
     }
 }
 
-//{
-//"bankAddress":"0x8Ab533C50cFcE7D25Dd3cC311B0e40080Bf71bef",
-//"beneficiaryAddress":"0x2aD0a91C6e8199Aa4B264e417521eA6bb1636f53",
-//"tokenRate":"125",
-//"minBuyableAmount":"10000000000000000",
-//"maxTokensAmount":"125000000000000000000",
-//"endDate":1509278400
-//}
 func postDeployAction(c *gin.Context) {
     request := &models.PresaleDeployParams{}
     err := c.BindJSON(request)
@@ -162,6 +156,25 @@ func postAddAction(c *gin.Context) {
     }
 
     tx, err := geth.GetPresale().Add(request.Address, request.Amount)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "tx": tx.String(),
+    })
+}
+
+func postTopUpAction(c *gin.Context) {
+    request := &models.AddressWithAmount{}
+    err := c.BindJSON(request)
+    if err != nil {
+        rest.NewResponder(c).ErrorValidation(err.Error())
+        return
+    }
+
+    tx, err := geth.GetPresale().TopUp(request.Address, request.Amount)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

@@ -77,7 +77,7 @@ func verifyConfig() {
         logrus.Warn("Project name is not configured")
     }
 
-    if !viper.IsSet("geth.main.keyfile") {
+    if !viper.IsSet("geth.main.key_file") {
         logrus.Warn("Main key file is not specified")
     }
 

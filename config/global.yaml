@@ -12,4 +12,6 @@ geth:
   addr:
     token: 0x1008ba59af5a1efb7db4c10a6d200503785c62f7
     privPlace: 0x020225f157d4e99055356597556d0f6fb06d1184
-    presale: 0x124bdbd92e3774b1ef2d3f762a520043bdd0b30a
+    presale: 0x4095b16300B89ecB2cDa7f0AB6C01a783b91Db4F
+security:
+  sign: simple-string-by-default

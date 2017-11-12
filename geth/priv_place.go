@@ -7,6 +7,7 @@ import (
     "errors"
     "fmt"
     "hoqu-geth-api/sdk/geth"
+    "github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
 var privPlace *PrivatePlacement
@@ -38,5 +39,7 @@ func GetPrivatePlacement() *PrivatePlacement {
 }
 
 func (t *PrivatePlacement) TokenAddr() (common.Address, error) {
-    return t.PrivatePlacement.Token(nil)
+    return t.PrivatePlacement.Token(&bind.CallOpts{
+        From: t.Wallet.Account.From,
+    })
 }

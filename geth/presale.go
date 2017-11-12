@@ -147,21 +147,15 @@ func (p *Presale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
     }
 
     for key, event := range events {
-        switch event.Name {
-        case "TokenBought":
-            events[key].Args = models.TokenBoughtEvent{
+        switch  {
+        case event.Name == "TokenBought" || event.Name == "TokenAdded" || event.Name == "TokenToppedUp" || event.Name == "TokenSubtracted":
+            events[key].Args = models.TokenAddedEventArgs{
                 Address: common.BytesToAddress(event.RawArgs[0]).String(),
                 TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),
                 EtherAmount: common.BytesToHash(event.RawArgs[2]).Big().String(),
             }
-        case "TokenAdded":
-            events[key].Args = models.TokenAddedEvent{
-                Address: common.BytesToAddress(event.RawArgs[0]).String(),
-                TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),
-                EtherAmount: common.BytesToHash(event.RawArgs[2]).Big().String(),
-            }
-        case "TokenSent":
-            events[key].Args = models.TokenSentEvent{
+        case event.Name == "TokenSent":
+            events[key].Args = models.TokenSentEventAgrs{
                 Address: common.BytesToAddress(event.RawArgs[0]).String(),
                 TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),
             }
@@ -180,6 +174,20 @@ func (p *Presale) Add(addr string, tokens string) (common.Hash, error) {
     }
 
     tx, err := p.Presale.Add(p.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    if err != nil {
+        return common.Hash{}, err
+    }
+
+    return tx.Hash(), nil
+}
+
+func (p *Presale) TopUp(addr string, tokens string) (common.Hash, error) {
+    tokensAmount, ok := big.NewInt(0).SetString(tokens, 0)
+    if !ok {
+        return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
+    }
+
+    tx, err := p.Presale.TopUp(p.Wallet.Account, common.HexToAddress(addr), tokensAmount)
     if err != nil {
         return common.Hash{}, err
     }

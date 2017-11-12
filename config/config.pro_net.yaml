@@ -4,4 +4,7 @@ geth:
   endpoint: /home/node/.ethereum/geth.ipc
   main:
     key_file: data/keys/main
-    pass: store_key_in_local_config
+  addr:
+    token: 0x1b957dc4aefeed3b4a2351a6a6d5cbfbba0cecfa
+    privPlace: 0x7ceb828497922646c2b0bd23ba199d753219f64c
+    presale: 0x903E7414cb54e44766dCf03e4aB424FDf9259D78
