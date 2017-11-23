@@ -6,14 +6,14 @@ import (
 )
 
 type ExecTracker struct {
-    name string
+    name  string
     start time.Time
 }
 
 func NewExecTracker(name string) *ExecTracker {
     log.Infof("%s started", name)
     return &ExecTracker{
-        name: name,
+        name:  name,
         start: time.Now(),
     }
 }

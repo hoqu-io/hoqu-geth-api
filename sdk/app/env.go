@@ -1,13 +1,13 @@
 package app
 
 import (
-	"os"
+    "os"
 )
 
 const (
-	ENVNAME string = "APPLICATION_ENV"
-	PRONET_ENV = "pro_net"
-	TESTNET_ENV = "test_net"
+    ENVNAME     string = "APPLICATION_ENV"
+    PRONET_ENV         = "pro_net"
+    TESTNET_ENV        = "test_net"
     DEFAULT_ENV string = TESTNET_ENV
 )
 
@@ -22,11 +22,11 @@ func Env() string {
 }
 
 func getAppEnv(def string) (env string) {
-	env = os.Getenv(ENVNAME)
+    env = os.Getenv(ENVNAME)
 
-	if env = os.Getenv(ENVNAME); env == "" {
-		env = def
-	}
+    if env = os.Getenv(ENVNAME); env == "" {
+        env = def
+    }
 
-	return
+    return
 }

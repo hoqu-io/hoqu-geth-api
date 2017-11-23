@@ -14,35 +14,35 @@ import (
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
-var presale *Presale
+var sale *Sale
 
-type Presale struct {
+type Sale struct {
     *geth.Contract
-    Presale *contract.ClaimableCrowdsale
+    Sale *contract.ChangeableRateCrowdsale
 }
 
-func InitPresale() error {
-    c := geth.NewContract(viper.GetString("geth.addr.presale"))
-    c.InitEvents(contract.ClaimableCrowdsaleABI)
+func InitSale() error {
+    c := geth.NewContract(viper.GetString("geth.addr.sale"))
+    c.InitEvents(contract.ChangeableRateCrowdsaleABI)
 
-    psale, err := contract.NewClaimableCrowdsale(c.Address, c.Wallet.Connection)
+    s, err := contract.NewChangeableRateCrowdsale(c.Address, c.Wallet.Connection)
     if err != nil {
-        return errors.New(fmt.Sprintf("Failed to instantiate a Presale contract: %v", err))
+        return errors.New(fmt.Sprintf("Failed to instantiate a Sale contract: %v", err))
     }
 
-    presale = &Presale{
+    sale = &Sale{
         Contract: c,
-        Presale:  psale,
+        Sale:     s,
     }
 
     return nil
 }
 
-func GetPresale() *Presale {
-    return presale
+func GetSale() *Sale {
+    return sale
 }
 
-func (p *Presale) Deploy(params *models.PresaleDeployParams) (*common.Address, *types.Transaction, error) {
+func (s *Sale) Deploy(params *models.SaleDeployParams) (*common.Address, *types.Transaction, error) {
     var tokenAddr common.Address
     tokenAddr, err := GetPrivatePlacement().TokenAddr()
     if err != nil {
@@ -51,22 +51,22 @@ func (p *Presale) Deploy(params *models.PresaleDeployParams) (*common.Address, *
 
     tokenRate, ok := big.NewInt(0).SetString(params.TokenRate, 0)
     if !ok {
-        return nil, nil, fmt.Errorf("wrong number provided: %s", params.TokenRate)
+        return nil, nil, fmt.Errorf("wrong TokenRate provided: %s", params.TokenRate)
     }
 
     minBuyableAmount, ok := big.NewInt(0).SetString(params.MinBuyableAmount, 0)
     if !ok {
-        return nil, nil, fmt.Errorf("wrong number provided: %s", params.MinBuyableAmount)
+        return nil, nil, fmt.Errorf("wrong MinBuyableAmount provided: %s", params.MinBuyableAmount)
     }
 
     maxTokensAmount, ok := big.NewInt(0).SetString(params.MaxTokensAmount, 0)
     if !ok {
-        return nil, nil, fmt.Errorf("wrong number provided: %s", params.MaxTokensAmount)
+        return nil, nil, fmt.Errorf("wrong MaxTokensAmount provided: %s", params.MaxTokensAmount)
     }
 
-    address, tx, _, err := contract.DeployClaimableCrowdsale(
-        p.Wallet.Account,
-        p.Wallet.Connection,
+    address, tx, _, err := contract.DeployChangeableRateCrowdsale(
+        s.Wallet.Account,
+        s.Wallet.Connection,
         tokenAddr,
         common.HexToAddress(params.BankAddress),
         common.HexToAddress(params.BeneficiaryAddress),
@@ -81,67 +81,67 @@ func (p *Presale) Deploy(params *models.PresaleDeployParams) (*common.Address, *
     return &address, tx, nil
 }
 
-func (p *Presale) Balance(addr string) (*big.Int, error) {
-    return p.Presale.Tokens(nil, common.HexToAddress(addr))
+func (s *Sale) Balance(addr string) (*big.Int, error) {
+    return s.Sale.Tokens(nil, common.HexToAddress(addr))
 }
 
-func (p *Presale) Summary() (*models.Summary, error) {
-    max, err := p.Presale.MaxTokensAmount(nil)
+func (s *Sale) Summary() (*models.SaleSummary, error) {
+    max, err := s.Sale.MaxTokensAmount(nil)
     if err != nil {
         return nil, err
     }
 
-    issued, err := p.Presale.IssuedTokensAmount(nil)
+    issued, err := s.Sale.IssuedTokensAmount(nil)
     if err != nil {
         return nil, err
     }
 
-    min, err := p.Presale.MinBuyableAmount(nil)
+    nextBoundary, err := s.Sale.NextBoundaryAmount(nil)
     if err != nil {
         return nil, err
     }
 
-    rate, err := p.Presale.TokenRate(nil)
+    rate, err := s.Sale.TokenRate(nil)
     if err != nil {
         return nil, err
     }
 
-    receivers, err := p.Presale.GetReceiversCount(&bind.CallOpts{
-        From: p.Wallet.Account.From,
+    receivers, err := s.Sale.GetReceiversCount(&bind.CallOpts{
+        From: s.Wallet.Account.From,
     })
     if err != nil {
         return nil, err
     }
 
-    isFin, err := p.Presale.IsFinished(&bind.CallOpts{
-        From: p.Wallet.Account.From,
+    isFin, err := s.Sale.IsFinished(&bind.CallOpts{
+        From: s.Wallet.Account.From,
     })
     if err != nil {
         return nil, err
     }
 
-    return &models.Summary{
-        Address:            p.Address.String(),
+    return &models.SaleSummary{
+        Address:            s.Address.String(),
         MaxTokensAmount:    max.String(),
-        MinBuyableAmount:   min.String(),
         IssuedTokensAmount: issued.String(),
+        NextBoundaryAmount: nextBoundary.String(),
         TokenRate:          rate.String(),
         ReceiversCount:     receivers,
         IsFinished:         isFin,
     }, nil
 }
 
-func (p *Presale) Approved(addr string) (bool, error) {
-    return p.Presale.Approved(nil, common.HexToAddress(addr))
+func (s *Sale) Approved(addr string) (bool, error) {
+    return s.Sale.Approved(nil, common.HexToAddress(addr))
 }
 
-func (p *Presale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
+func (s *Sale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
     hashAddrs := make([]common.Hash, len(addrs))
     for _, addr := range addrs {
         hashAddrs = append(hashAddrs, common.HexToHash(addr))
     }
 
-    events, err := p.GetEventsByTopics([][]common.Hash{{}, hashAddrs})
+    events, err := s.GetEventsByTopics([][]common.Hash{{}, hashAddrs})
     if err != nil {
         return nil, err
     }
@@ -167,13 +167,13 @@ func (p *Presale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
     return events, nil
 }
 
-func (p *Presale) Add(addr string, tokens string) (common.Hash, error) {
+func (s *Sale) Add(addr string, tokens string) (common.Hash, error) {
     tokensAmount, ok := big.NewInt(0).SetString(tokens, 0)
     if !ok {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
     }
 
-    tx, err := p.Presale.Add(p.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    tx, err := s.Sale.Add(s.Wallet.Account, common.HexToAddress(addr), tokensAmount)
     if err != nil {
         return common.Hash{}, err
     }
@@ -181,13 +181,13 @@ func (p *Presale) Add(addr string, tokens string) (common.Hash, error) {
     return tx.Hash(), nil
 }
 
-func (p *Presale) TopUp(addr string, tokens string) (common.Hash, error) {
+func (s *Sale) TopUp(addr string, tokens string) (common.Hash, error) {
     tokensAmount, ok := big.NewInt(0).SetString(tokens, 0)
     if !ok {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
     }
 
-    tx, err := p.Presale.TopUp(p.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    tx, err := s.Sale.TopUp(s.Wallet.Account, common.HexToAddress(addr), tokensAmount)
     if err != nil {
         return common.Hash{}, err
     }
@@ -195,8 +195,8 @@ func (p *Presale) TopUp(addr string, tokens string) (common.Hash, error) {
     return tx.Hash(), nil
 }
 
-func (p *Presale) Approve(addr string) (common.Hash, error) {
-    tx, err := p.Presale.Approve(p.Wallet.Account, common.HexToAddress(addr))
+func (s *Sale) Approve(addr string) (common.Hash, error) {
+    tx, err := s.Sale.Approve(s.Wallet.Account, common.HexToAddress(addr))
     if err != nil {
         return common.Hash{}, err
     }

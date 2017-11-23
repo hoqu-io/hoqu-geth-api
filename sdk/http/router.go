@@ -14,7 +14,7 @@ var router *gin.Engine
 var routerOnceInitializer sync.Once
 
 func getRouter() *gin.Engine {
-    routerOnceInitializer.Do(func(){
+    routerOnceInitializer.Do(func() {
         router = gin.New()
     })
     return router

@@ -1,12 +1,12 @@
 package geth
 
 import (
-    "hoqu-geth-api/contract"
+    "hoqu-api/contract"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
     "fmt"
-    "hoqu-geth-api/sdk/geth"
+    "hoqu-api/sdk/geth"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 
@@ -27,7 +27,7 @@ func InitPrivatePlacement() error {
     }
 
     privPlace = &PrivatePlacement{
-        Contract: c,
+        Contract:         c,
         PrivatePlacement: pp,
     }
 

@@ -2,12 +2,12 @@ package http
 
 import (
     "github.com/gin-gonic/gin"
-    "hoqu-geth-api/geth"
-    "hoqu-geth-api/sdk/http/rest"
-    "hoqu-geth-api/geth/models"
+    "hoqu-api/geth"
+    "hoqu-api/sdk/http/rest"
+    "hoqu-api/geth/models"
 )
 
-func initTokenRoutes(router *gin.Engine)  {
+func initTokenRoutes(router *gin.Engine) {
     hqx := router.Group("/hqx")
     {
         hqx.GET("/balance/:address", getHqxBalanceAction)

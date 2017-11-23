@@ -45,7 +45,7 @@ func ReadAndMerge(files []string) {
 
         if err != nil && filepath.Base(file) != "local.yaml" {
             logrus.Panicf(
-                "Can not load config file %s. An error message: %s", file,	err,
+                "Can not load config file %s. An error message: %s", file, err,
             )
             return
         }

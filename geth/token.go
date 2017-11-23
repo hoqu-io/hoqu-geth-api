@@ -1,13 +1,13 @@
 package geth
 
 import (
-    "hoqu-geth-api/contract"
+    "hoqu-api/contract"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
     "fmt"
     "math/big"
-    "hoqu-geth-api/sdk/geth"
+    "hoqu-api/sdk/geth"
 )
 
 var token *Token
@@ -28,7 +28,7 @@ func InitToken() error {
 
     token = &Token{
         Contract: c,
-        Token: t,
+        Token:    t,
     }
 
     return nil

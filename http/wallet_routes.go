@@ -2,12 +2,12 @@ package http
 
 import (
     "github.com/gin-gonic/gin"
-    "hoqu-geth-api/sdk/http/rest"
-    sdkGeth "hoqu-geth-api/sdk/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-api/sdk/http/rest"
+    sdkGeth "hoqu-api/sdk/geth"
+    "hoqu-api/geth/models"
 )
 
-func initWalletRoutes(router *gin.Engine)  {
+func initWalletRoutes(router *gin.Engine) {
     eth := router.Group("/eth")
     {
         eth.GET("/balance/:address", getEthBalanceAction)

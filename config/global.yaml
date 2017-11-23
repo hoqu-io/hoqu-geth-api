@@ -13,5 +13,8 @@ geth:
     token: 0x1008ba59af5a1efb7db4c10a6d200503785c62f7
     privPlace: 0x020225f157d4e99055356597556d0f6fb06d1184
     presale: 0x4095b16300B89ecB2cDa7f0AB6C01a783b91Db4F
+    sale: 0xD8A9f3A5Ee60EFFC2918Ce7Aa9885cb31aa1C1D8
+    conf: 0xf24F798967fb013e0BA5B45C12b88E71aC3B2509
+    platform: 0x3DEc17653e66fC5Aa0A134A8434387764398515C
 security:
   sign: simple-string-by-default

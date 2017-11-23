@@ -8,9 +8,9 @@ import (
 )
 
 func ExecutionTime() gin.HandlerFunc {
-    return func (c *gin.Context) {
+    return func(c *gin.Context) {
         st := gin.Param{
-            Key: "startTime",
+            Key:   "startTime",
             Value: time.Now().Format(time.RFC3339Nano),
         }
 
@@ -20,7 +20,7 @@ func ExecutionTime() gin.HandlerFunc {
         c.Params = append(c.Params, st)
         c.Next()
 
-        go func () {
+        go func() {
             for {
                 select {
                 case <-done:
@@ -37,7 +37,7 @@ func ExecutionTime() gin.HandlerFunc {
                     return
                 case <-time.After(3 * time.Second):
                     logrus.Warnf(
-                    "%s %s %d Executing too long",
+                        "%s %s %d Executing too long",
                         c.Request.RequestURI,
                         c.Request.Method,
                         c.Writer.Status(),

@@ -4,22 +4,21 @@ import (
     "github.com/ethereum/go-ethereum/common"
     "github.com/ethereum/go-ethereum/accounts/abi"
     "strings"
-    "github.com/ethereum/go-ethereum"
     "context"
-    "hoqu-geth-api/sdk/models"
+    "hoqu-api/sdk/models"
     "fmt"
 )
 
 type Contract struct {
-    Wallet *Wallet
+    Wallet  *Wallet
     Address common.Address
-    Abi abi.ABI
-    Events map[string]string
+    Abi     abi.ABI
+    Events  map[string]string
 }
 
 func NewContract(addr string) *Contract {
     return &Contract{
-        Wallet: GetWallet(),
+        Wallet:  GetWallet(),
         Address: common.HexToAddress(addr),
     }
 }
@@ -58,20 +57,20 @@ func (c *Contract) GetEventsByTopics(topics [][]common.Hash) ([]models.ContractE
             return events, fmt.Errorf("unknown event parsed: %s", eventLog.Topics[0].String())
         }
 
-        if len(eventLog.Data) % 32 != 0 {
+        if len(eventLog.Data)%32 != 0 {
             return events, fmt.Errorf("wrong event unindexed data provided: %d", len(eventLog.Data))
         }
 
         numOfIndexed := len(eventLog.Topics) - 1
         numOfUnindexed := len(eventLog.Data) / 32
-        rawArgs := make([][]byte, numOfIndexed + numOfUnindexed)
+        rawArgs := make([][]byte, numOfIndexed+numOfUnindexed)
         if numOfIndexed > 0 {
             for i, indData := range eventLog.Topics[1:] {
                 rawArgs[i] = indData.Bytes()
             }
         }
         for i := 0; i < numOfUnindexed; i++ {
-            rawArgs[numOfIndexed + i] = eventLog.Data[i * 32:(i + 1) * 32]
+            rawArgs[numOfIndexed+i] = eventLog.Data[i*32:(i+1)*32]
         }
 
         block, err := c.Wallet.Connection.HeaderByHash(context.TODO(), eventLog.BlockHash)
@@ -80,14 +79,14 @@ func (c *Contract) GetEventsByTopics(topics [][]common.Hash) ([]models.ContractE
         }
 
         events[key] = models.ContractEvent{
-            Name: name,
-            RawArgs: rawArgs,
-            TxHash: eventLog.TxHash,
+            Name:        name,
+            RawArgs:     rawArgs,
+            TxHash:      eventLog.TxHash,
             BlockNumber: eventLog.BlockNumber,
-            BlockHash: eventLog.BlockHash,
-            BlockTime: block.Time.String(),
-            TxIndex: eventLog.TxIndex,
-            Removed: eventLog.Removed,
+            BlockHash:   eventLog.BlockHash,
+            BlockTime:   block.Time.String(),
+            TxIndex:     eventLog.TxIndex,
+            Removed:     eventLog.Removed,
         }
     }
 

@@ -3,13 +3,13 @@ package rest
 import (
     "github.com/gin-gonic/gin"
     "net/http"
-    "hoqu-geth-api/sdk/models"
+    "hoqu-api/sdk/models"
 )
 
 const (
-    ErrorNoError = "NO_ERROR"
-    ErrorDefault = "ERROR"
-    ErrorValidation = "ERROR_VALIDATION"
+    ErrorNoError       = "NO_ERROR"
+    ErrorDefault       = "ERROR"
+    ErrorValidation    = "ERROR_VALIDATION"
     ErrorAuthorization = "ERROR_AUTHORIZATION"
 )
 
@@ -42,7 +42,7 @@ func (resp Responder) ErrorAuthorization() {
 func (resp Responder) ErrorWithCode(httpCode int, restCode string, message interface{}) {
     data := &models.RestResponse{
         Error: models.RestError{
-            Code: restCode,
+            Code:    restCode,
             Message: message,
         },
     }

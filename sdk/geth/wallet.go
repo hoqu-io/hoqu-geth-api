@@ -16,7 +16,7 @@ var wallet *Wallet
 
 type Wallet struct {
     Connection *ethclient.Client
-    Account *bind.TransactOpts
+    Account    *bind.TransactOpts
 }
 
 func InitWallet(endpoint string, keyFile string, keyPass string) error {
@@ -37,7 +37,7 @@ func InitWallet(endpoint string, keyFile string, keyPass string) error {
 
     wallet = &Wallet{
         Connection: conn,
-        Account: acc,
+        Account:    acc,
     }
 
     return nil

@@ -1,6 +1,6 @@
 package models
 
-type PresaleDeployParams struct {
+type SaleDeployParams struct {
     BankAddress        string `json:"bankAddress"`
     BeneficiaryAddress string `json:"beneficiaryAddress"`
     TokenRate          string `json:"tokenRate"`
@@ -9,22 +9,11 @@ type PresaleDeployParams struct {
     EndDate            int64  `json:"endDate"`
 }
 
-type TokenAddedEventArgs struct {
-    Address     string `json:"address"`
-    TokenAmount string `json:"tokenAmount"`
-    EtherAmount string `json:"ethAmount"`
-}
-
-type TokenSentEventAgrs struct {
-    Address     string `json:"address"`
-    TokenAmount string `json:"tokenAmount"`
-}
-
-type Summary struct {
+type SaleSummary struct {
     Address            string `json:"address"`
-    MinBuyableAmount   string `json:"minBuyableAmount"`
     MaxTokensAmount    string `json:"maxTokensAmount"`
     IssuedTokensAmount string `json:"issuedTokensAmount"`
+    NextBoundaryAmount string `json:"nextBoundaryAmount"`
     TokenRate          string `json:"tokenRate"`
     ReceiversCount     uint32 `json:"receiversCount"`
     IsFinished         bool   `json:"isFinished"`

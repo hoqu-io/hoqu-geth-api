@@ -8,31 +8,31 @@ import (
     "hoqu-api/sdk/http/middleware"
 )
 
-func initPresaleRoutes(router *gin.Engine) {
-    presale := router.Group("/presale")
+func initSaleRoutes(router *gin.Engine) {
+    sale := router.Group("/sale")
     {
-        presale.POST("/deploy", middleware.SignRequired(), postDeployAction)
-        presale.GET("/summary", getSummaryAction)
-        presale.GET("/balance/:address", getClaimableTokensBalanceAction)
-        presale.POST("/balances", postClaimableTokensBalancesAction)
-        presale.GET("/approved/:address", getApprovedAction)
-        presale.POST("/approved", postApprovedManyAction)
-        presale.POST("/transactions", postPresaleTransactionsAction)
-        presale.POST("/add", middleware.SignRequired(), postAddAction)
-        presale.POST("/topup", middleware.SignRequired(), postTopUpAction)
-        presale.POST("/approve", middleware.SignRequired(), postApproveAction)
+        sale.POST("/deploy", middleware.SignRequired(), postDeploySaleAction)
+        sale.GET("/summary", getSaleSummaryAction)
+        sale.GET("/balance/:address", getSaleTokensBalanceAction)
+        sale.POST("/balances", postSaleTokensBalancesAction)
+        sale.GET("/approved/:address", getSaleApprovedAction)
+        sale.POST("/approved", postSaleApprovedManyAction)
+        sale.POST("/transactions", postSaleTransactionsAction)
+        sale.POST("/add", middleware.SignRequired(), postSaleAddAction)
+        sale.POST("/topup", middleware.SignRequired(), postSaleTopUpAction)
+        sale.POST("/approve", middleware.SignRequired(), postSaleApproveAction)
     }
 }
 
-func postDeployAction(c *gin.Context) {
-    request := &models.PresaleDeployParams{}
+func postDeploySaleAction(c *gin.Context) {
+    request := &models.SaleDeployParams{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    addr, tx, err := geth.GetPresale().Deploy(request)
+    addr, tx, err := geth.GetSale().Deploy(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -44,8 +44,8 @@ func postDeployAction(c *gin.Context) {
     })
 }
 
-func getSummaryAction(c *gin.Context) {
-    sum, err := geth.GetPresale().Summary()
+func getSaleSummaryAction(c *gin.Context) {
+    sum, err := geth.GetSale().Summary()
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -56,9 +56,9 @@ func getSummaryAction(c *gin.Context) {
     })
 }
 
-func getClaimableTokensBalanceAction(c *gin.Context) {
+func getSaleTokensBalanceAction(c *gin.Context) {
     addr := c.Param("address")
-    bal, err := geth.GetPresale().Balance(addr)
+    bal, err := geth.GetSale().Balance(addr)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -69,7 +69,7 @@ func getClaimableTokensBalanceAction(c *gin.Context) {
     })
 }
 
-func postClaimableTokensBalancesAction(c *gin.Context) {
+func postSaleTokensBalancesAction(c *gin.Context) {
     request := &models.Addresses{}
     err := c.BindJSON(request)
     if err != nil {
@@ -79,7 +79,7 @@ func postClaimableTokensBalancesAction(c *gin.Context) {
 
     bals := map[string]string{}
     for _, addr := range request.Addresses {
-        bal, err := geth.GetPresale().Balance(addr)
+        bal, err := geth.GetSale().Balance(addr)
         if err != nil {
             rest.NewResponder(c).Error(err.Error())
             return
@@ -92,9 +92,9 @@ func postClaimableTokensBalancesAction(c *gin.Context) {
     })
 }
 
-func getApprovedAction(c *gin.Context) {
+func getSaleApprovedAction(c *gin.Context) {
     addr := c.Param("address")
-    approved, err := geth.GetPresale().Approved(addr)
+    approved, err := geth.GetSale().Approved(addr)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -105,7 +105,7 @@ func getApprovedAction(c *gin.Context) {
     })
 }
 
-func postApprovedManyAction(c *gin.Context) {
+func postSaleApprovedManyAction(c *gin.Context) {
     request := &models.Addresses{}
     err := c.BindJSON(request)
     if err != nil {
@@ -115,7 +115,7 @@ func postApprovedManyAction(c *gin.Context) {
 
     approvedMap := map[string]bool{}
     for _, addr := range request.Addresses {
-        approved, err := geth.GetPresale().Approved(addr)
+        approved, err := geth.GetSale().Approved(addr)
         if err != nil {
             rest.NewResponder(c).Error(err.Error())
             return
@@ -128,7 +128,7 @@ func postApprovedManyAction(c *gin.Context) {
     })
 }
 
-func postPresaleTransactionsAction(c *gin.Context) {
+func postSaleTransactionsAction(c *gin.Context) {
     request := &models.Addresses{}
     err := c.BindJSON(request)
     if err != nil {
@@ -136,7 +136,7 @@ func postPresaleTransactionsAction(c *gin.Context) {
         return
     }
 
-    events, err := geth.GetPresale().Events(request.Addresses)
+    events, err := geth.GetSale().Events(request.Addresses)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -147,7 +147,7 @@ func postPresaleTransactionsAction(c *gin.Context) {
     })
 }
 
-func postAddAction(c *gin.Context) {
+func postSaleAddAction(c *gin.Context) {
     request := &models.AddressWithAmount{}
     err := c.BindJSON(request)
     if err != nil {
@@ -155,7 +155,7 @@ func postAddAction(c *gin.Context) {
         return
     }
 
-    tx, err := geth.GetPresale().Add(request.Address, request.Amount)
+    tx, err := geth.GetSale().Add(request.Address, request.Amount)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -166,7 +166,7 @@ func postAddAction(c *gin.Context) {
     })
 }
 
-func postTopUpAction(c *gin.Context) {
+func postSaleTopUpAction(c *gin.Context) {
     request := &models.AddressWithAmount{}
     err := c.BindJSON(request)
     if err != nil {
@@ -174,7 +174,7 @@ func postTopUpAction(c *gin.Context) {
         return
     }
 
-    tx, err := geth.GetPresale().TopUp(request.Address, request.Amount)
+    tx, err := geth.GetSale().TopUp(request.Address, request.Amount)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -185,7 +185,7 @@ func postTopUpAction(c *gin.Context) {
     })
 }
 
-func postApproveAction(c *gin.Context) {
+func postSaleApproveAction(c *gin.Context) {
     request := &models.Address{}
     err := c.BindJSON(request)
     if err != nil {
@@ -193,7 +193,7 @@ func postApproveAction(c *gin.Context) {
         return
     }
 
-    tx, err := geth.GetPresale().Approve(request.Address)
+    tx, err := geth.GetSale().Approve(request.Address)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
