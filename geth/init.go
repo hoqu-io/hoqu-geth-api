@@ -2,7 +2,7 @@ package geth
 
 import (
     "github.com/spf13/viper"
-    "hoqu-api/sdk/geth"
+    "hoqu-geth-api/sdk/geth"
     "fmt"
 )
 
@@ -37,6 +37,10 @@ func InitGeth() error {
     }
 
     if err := InitSale(); err != nil {
+        return err
+    }
+
+    if err := InitBounty(); err != nil {
         return err
     }
 

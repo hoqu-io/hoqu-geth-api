@@ -3,7 +3,7 @@ package rest
 import (
     "github.com/gin-gonic/gin"
     "net/http"
-    "hoqu-api/sdk/models"
+    "hoqu-geth-api/sdk/models"
 )
 
 const (

@@ -1,14 +1,14 @@
 package geth
 
 import (
-    "hoqu-api/contract/platform"
+    "hoqu-geth-api/contract/platform"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
     "fmt"
-    "hoqu-api/sdk/geth"
-    "hoqu-api/geth/models"
-    sdkModels "hoqu-api/sdk/models"
+    "hoqu-geth-api/sdk/geth"
+    "hoqu-geth-api/geth/models"
+    sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
 )
 

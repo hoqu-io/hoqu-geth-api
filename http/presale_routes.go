@@ -2,10 +2,10 @@ package http
 
 import (
     "github.com/gin-gonic/gin"
-    "hoqu-api/sdk/http/rest"
-    "hoqu-api/geth"
-    "hoqu-api/geth/models"
-    "hoqu-api/sdk/http/middleware"
+    "hoqu-geth-api/sdk/http/rest"
+    "hoqu-geth-api/geth"
+    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/sdk/http/middleware"
 )
 
 func initPresaleRoutes(router *gin.Engine) {

@@ -5,8 +5,9 @@ import (
     "github.com/ethereum/go-ethereum/accounts/abi"
     "strings"
     "context"
-    "hoqu-api/sdk/models"
+    "hoqu-geth-api/sdk/models"
     "fmt"
+    "github.com/ethereum/go-ethereum"
 )
 
 type Contract struct {

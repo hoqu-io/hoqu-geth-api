@@ -8,3 +8,5 @@ geth:
     token: 0x1b957dc4aefeed3b4a2351a6a6d5cbfbba0cecfa
     privPlace: 0x7ceb828497922646c2b0bd23ba199d753219f64c
     presale: 0x903E7414cb54e44766dCf03e4aB424FDf9259D78
+    sale: 0xF37c4A962e70d813A4D9825942141Cd9Bc5169Fd
+    bounty: 0x7dc8C210540be4EaA3Bb194B4D9B4907E0Dae04f

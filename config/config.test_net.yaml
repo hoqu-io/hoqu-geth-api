@@ -4,5 +4,6 @@ server:
 geth:
   endpoint: https://rinkeby.infura.io
   main:
-    key_file: data/keys/testnet_main
     pass: nhbybnb123
+security:
+  sign: test-hash

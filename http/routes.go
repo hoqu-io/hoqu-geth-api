@@ -1,10 +1,10 @@
 package http
 
 import (
-    sdkHttp "hoqu-api/sdk/http"
+    sdkHttp "hoqu-geth-api/sdk/http"
     "github.com/gin-gonic/gin"
     "sync"
-    "hoqu-api/sdk/http/middleware"
+    "hoqu-geth-api/sdk/http/middleware"
 )
 
 var routerOnceInitializer sync.Once
@@ -21,6 +21,7 @@ func initRoutes(router *gin.Engine) {
         initTokenRoutes(router)
         initPresaleRoutes(router)
         initSaleRoutes(router)
+        initBountyRoutes(router)
         initHoQuConfigRoutes(router)
         initHoquPlatformRoutes(router)
     })

@@ -2,9 +2,9 @@ package http
 
 import (
     "github.com/gin-gonic/gin"
-    "hoqu-api/sdk/http/rest"
-    sdkGeth "hoqu-api/sdk/geth"
-    "hoqu-api/geth/models"
+    "hoqu-geth-api/sdk/http/rest"
+    sdkGeth "hoqu-geth-api/sdk/geth"
+    "hoqu-geth-api/geth/models"
 )
 
 func initWalletRoutes(router *gin.Engine) {

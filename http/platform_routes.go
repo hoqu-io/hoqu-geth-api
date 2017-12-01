@@ -2,18 +2,23 @@ package http
 
 import (
     "github.com/gin-gonic/gin"
-    "hoqu-api/sdk/http/rest"
-    "hoqu-api/geth"
-    "hoqu-api/sdk/http/middleware"
-    "strconv"
-    "fmt"
+    "hoqu-geth-api/sdk/http/rest"
+    "hoqu-geth-api/geth"
+    "hoqu-geth-api/sdk/http/middleware"
+    "hoqu-geth-api/http/platform"
+    "hoqu-geth-api/geth/models"
 )
 
 func initHoquPlatformRoutes(router *gin.Engine) {
-    platform := router.Group("/platform")
+    r := router.Group("/platform")
     {
-        platform.POST("/deploy", middleware.SignRequired(), postDeployHoquPlatformAction)
-        platform.GET("/user/:id", getPlatformUserAction)
+        r.POST("/deploy", middleware.SignRequired(), postDeployHoquPlatformAction)
+        r.POST("/events", postPlatformEventsAction)
+        platform.InitUserRoutes(r)
+        platform.InitCompanyRoutes(r)
+        platform.InitTrackerRoutes(r)
+        platform.InitOfferRoutes(r)
+        platform.InitLeadRoutes(r)
     }
 }
 
@@ -30,20 +35,21 @@ func postDeployHoquPlatformAction(c *gin.Context) {
     })
 }
 
-func getPlatformUserAction(c *gin.Context) {
-    id, err := strconv.ParseUint(c.Param("id"), 10, 32)
+func postPlatformEventsAction(c *gin.Context) {
+    request := &models.Addresses{}
+    err := c.BindJSON(request)
     if err != nil {
-        rest.NewResponder(c).Error(fmt.Errorf("wrong user id provided: %v", err.Error()))
+        rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    user, err := geth.GetHoquPlatform().GetUser(uint32(id))
+    events, err := geth.GetHoquPlatform().Events(request.Addresses)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
     rest.NewResponder(c).Success(gin.H{
-        "user": user,
+        "events": events,
     })
 }

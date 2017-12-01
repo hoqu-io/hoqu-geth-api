@@ -1,12 +1,12 @@
 package geth
 
 import (
-    "hoqu-api/contract"
+    "hoqu-geth-api/contract"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
     "fmt"
-    "hoqu-api/sdk/geth"
+    "hoqu-geth-api/sdk/geth"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
 

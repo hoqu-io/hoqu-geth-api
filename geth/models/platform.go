@@ -1,24 +1,25 @@
 package models
 
-type UserRegisteredEventArgs struct {
+type SetStatusRequest struct {
+    Id     uint32 `json:"id"`
+    Status uint8  `json:"status"`
+}
+
+type OnlyAddressEventArgs struct {
+    OwnerAddress string `json:"ownerAddress"`
+}
+
+type StatusChangedEventArgs struct {
+    OwnerAddress string `json:"ownerAddress"`
+    Status       uint8  `json:"status"`
+}
+
+type IdWithNameEventArgs struct {
     OwnerAddress string `json:"ownerAddress"`
     Id           string `json:"id"`
-    Role         string `json:"role"`
+    Name         string `json:"name"`
 }
 
-type KycReport struct {
-    CreatedAt string `json:"createdAt"`
-    ReportId  uint32 `json:"reportId"`
-    KycLevel  uint8  `json:"kycLevel"`
-    DataUrl   string `json:"dataUrl"`
-}
-
-type UserData struct {
-    CreatedAt  string               `json:"createdAt"`
-    Addresses  map[uint8]string     `json:"addresses"`
-    Role       string               `json:"role"`
-    KycLevel   uint8                `json:"kycLevel"`
-    KycReports map[uint16]KycReport `json:"kycReports"`
-    PubKey     string               `json:"pubKey"`
-    Status     uint8                `json:"status"`
+type IdRequest struct {
+    Id uint32 `json:"id"`
 }

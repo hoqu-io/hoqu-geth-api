@@ -1,15 +1,15 @@
 package geth
 
 import (
-    "hoqu-api/contract"
+    "hoqu-geth-api/contract"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
     "fmt"
     "math/big"
-    "hoqu-api/sdk/geth"
-    "hoqu-api/geth/models"
-    sdkModels "hoqu-api/sdk/models"
+    "hoqu-geth-api/sdk/geth"
+    "hoqu-geth-api/geth/models"
+    sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
@@ -148,7 +148,8 @@ func (s *Sale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
 
     for key, event := range events {
         switch {
-        case event.Name == "TokenBought" || event.Name == "TokenAdded" || event.Name == "TokenToppedUp" || event.Name == "TokenSubtracted":
+        case event.Name == "TokenBought" || event.Name == "TokenAdded" || event.Name == "TokenToppedUp" ||
+        event.Name == "TokenSubtracted":
             events[key].Args = models.TokenAddedEventArgs{
                 Address:     common.BytesToAddress(event.RawArgs[0]).String(),
                 TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),
@@ -167,13 +168,13 @@ func (s *Sale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
     return events, nil
 }
 
-func (s *Sale) Add(addr string, tokens string) (common.Hash, error) {
-    tokensAmount, ok := big.NewInt(0).SetString(tokens, 0)
+func (s *Sale) Add(addr string, eqEthAmount string) (common.Hash, error) {
+    ethAmount, ok := big.NewInt(0).SetString(eqEthAmount, 0)
     if !ok {
-        return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
+        return common.Hash{}, fmt.Errorf("wrong number provided: %s", eqEthAmount)
     }
 
-    tx, err := s.Sale.Add(s.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    tx, err := s.Sale.Add(s.Wallet.Account, common.HexToAddress(addr), ethAmount)
     if err != nil {
         return common.Hash{}, err
     }
@@ -181,13 +182,13 @@ func (s *Sale) Add(addr string, tokens string) (common.Hash, error) {
     return tx.Hash(), nil
 }
 
-func (s *Sale) TopUp(addr string, tokens string) (common.Hash, error) {
-    tokensAmount, ok := big.NewInt(0).SetString(tokens, 0)
+func (s *Sale) TopUp(addr string, eqEthAmount string) (common.Hash, error) {
+    ethAmount, ok := big.NewInt(0).SetString(eqEthAmount, 0)
     if !ok {
-        return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
+        return common.Hash{}, fmt.Errorf("wrong number provided: %s", eqEthAmount)
     }
 
-    tx, err := s.Sale.TopUp(s.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    tx, err := s.Sale.TopUp(s.Wallet.Account, common.HexToAddress(addr), ethAmount)
     if err != nil {
         return common.Hash{}, err
     }

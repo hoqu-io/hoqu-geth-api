@@ -3,7 +3,7 @@ package middleware
 import (
     "github.com/gin-gonic/gin"
     "net/http"
-    "hoqu-api/sdk/http/rest"
+    "hoqu-geth-api/sdk/http/rest"
     "github.com/spf13/viper"
     "fmt"
 )

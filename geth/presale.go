@@ -1,15 +1,15 @@
 package geth
 
 import (
-    "hoqu-api/contract"
+    "hoqu-geth-api/contract"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
     "fmt"
     "math/big"
-    "hoqu-api/sdk/geth"
-    "hoqu-api/geth/models"
-    sdkModels "hoqu-api/sdk/models"
+    "hoqu-geth-api/sdk/geth"
+    "hoqu-geth-api/geth/models"
+    sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
 )
@@ -148,7 +148,8 @@ func (p *Presale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
 
     for key, event := range events {
         switch {
-        case event.Name == "TokenBought" || event.Name == "TokenAdded" || event.Name == "TokenToppedUp" || event.Name == "TokenSubtracted":
+        case event.Name == "TokenBought" || event.Name == "TokenAdded" || event.Name == "TokenToppedUp" ||
+        event.Name == "TokenSubtracted":
             events[key].Args = models.TokenAddedEventArgs{
                 Address:     common.BytesToAddress(event.RawArgs[0]).String(),
                 TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),
@@ -173,7 +174,11 @@ func (p *Presale) Add(addr string, tokens string) (common.Hash, error) {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
     }
 
-    tx, err := p.Presale.Add(p.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    tx, err := p.Presale.Add(&bind.TransactOpts{
+        From:     p.Wallet.Account.From,
+        Signer:   p.Wallet.Account.Signer,
+        GasLimit: big.NewInt(120000),
+    }, common.HexToAddress(addr), tokensAmount)
     if err != nil {
         return common.Hash{}, err
     }
@@ -187,7 +192,11 @@ func (p *Presale) TopUp(addr string, tokens string) (common.Hash, error) {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
     }
 
-    tx, err := p.Presale.TopUp(p.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    tx, err := p.Presale.TopUp(&bind.TransactOpts{
+        From:     p.Wallet.Account.From,
+        Signer:   p.Wallet.Account.Signer,
+        GasLimit: big.NewInt(120000),
+    }, common.HexToAddress(addr), tokensAmount)
     if err != nil {
         return common.Hash{}, err
     }

@@ -2,10 +2,11 @@ package http
 
 import (
     "github.com/gin-gonic/gin"
-    "hoqu-api/sdk/http/rest"
-    "hoqu-api/geth"
-    "hoqu-api/geth/models"
-    "hoqu-api/sdk/http/middleware"
+    "hoqu-geth-api/sdk/http/rest"
+    "hoqu-geth-api/geth"
+    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/sdk/http/middleware"
+    "math/big"
 )
 
 func initSaleRoutes(router *gin.Engine) {
@@ -51,6 +52,16 @@ func getSaleSummaryAction(c *gin.Context) {
         return
     }
 
+    bSum, err := geth.GetBounty().Summary()
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    sIssued, _ := big.NewInt(0).SetString(sum.IssuedTokensAmount, 0)
+    bIssued, _ := big.NewInt(0).SetString(bSum.IssuedTokensAmount, 0)
+    sum.IssuedTokensAmount = big.NewInt(0).Add(sIssued, bIssued).String()
+
     rest.NewResponder(c).Success(gin.H{
         "summary": sum,
     })
@@ -64,8 +75,14 @@ func getSaleTokensBalanceAction(c *gin.Context) {
         return
     }
 
+    bbal, err := geth.GetBounty().Balance(addr)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
     rest.NewResponder(c).Success(gin.H{
-        "balance": bal.String(),
+        "balance": big.NewInt(0).Add(bal, bbal).String(),
     })
 }
 
@@ -84,7 +101,14 @@ func postSaleTokensBalancesAction(c *gin.Context) {
             rest.NewResponder(c).Error(err.Error())
             return
         }
-        bals[addr] = bal.String()
+
+        bbal, err := geth.GetBounty().Balance(addr)
+        if err != nil {
+            rest.NewResponder(c).Error(err.Error())
+            return
+        }
+
+        bals[addr] = big.NewInt(0).Add(bal, bbal).String()
     }
 
     rest.NewResponder(c).Success(gin.H{
@@ -141,6 +165,14 @@ func postSaleTransactionsAction(c *gin.Context) {
         rest.NewResponder(c).Error(err.Error())
         return
     }
+
+    bEvents, err := geth.GetBounty().Events(request.Addresses)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    events = append(events, bEvents...)
 
     rest.NewResponder(c).Success(gin.H{
         "transactions": events,
