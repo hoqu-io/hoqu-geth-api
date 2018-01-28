@@ -26,8 +26,9 @@ func ExecutionTime() gin.HandlerFunc {
                 case <-done:
                     st, err := time.Parse(time.RFC3339, c.Param("startTime"))
                     if err == nil {
-                        logrus.Warnf(
-                            "%s %s %d Executed withing %f seconds",
+                        logrus.Infof(
+                            "[%s] %s %s %d Executed withing %f seconds",
+                            time.Now().Format("02.01.2006 15:04:05"),
                             c.Request.RequestURI,
                             c.Request.Method,
                             c.Writer.Status(),
@@ -37,7 +38,8 @@ func ExecutionTime() gin.HandlerFunc {
                     return
                 case <-time.After(3 * time.Second):
                     logrus.Warnf(
-                        "%s %s %d Executing too long",
+                        "[%s] %s %s %d Executing too long",
+                        time.Now().Format("02.01.2006 15:04:05"),
                         c.Request.RequestURI,
                         c.Request.Method,
                         c.Writer.Status(),

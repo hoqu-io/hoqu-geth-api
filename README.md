@@ -37,7 +37,7 @@ make all
 Build HOQU API
 
 ```console
-cd $GOPATH/src/hoqu-api
+cd $GOPATH/src/hoqu-geth-api
 go build
 ```
 
@@ -46,7 +46,7 @@ go build
 Run API
 
 ```console
-./hoqu-api
+./hoqu-geth-api
 ```
 
 ## Execution (production with own node)
@@ -63,7 +63,7 @@ Use IPC endpoint provided by geth in your pro_net config (geth -> endpoint)
 Run API
 
 ```console
-APPLICATION_ENV=pro_net ./hoqu-api
+APPLICATION_ENV=pro_net ./hoqu-geth-api
 ```
 
 ## Development
@@ -77,25 +77,25 @@ Install [Solidity compiler](http://solidity.readthedocs.io/en/develop/installing
 copy HOQU contracts to sol
 
 ```console
-cd $GOPATH/src/hoqu-api
+cd $GOPATH/src/hoqu-geth-api
 rsync -vax vendor/github.com/hoqu-io/platform/contracts/ sol/
 ```
 
 copy zeppelin contracts to sol
 
 ```console
-cd $GOPATH/src/hoqu-api
+cd $GOPATH/src/hoqu-geth-api
 rsync -vax vendor/github.com/OpenZeppelin/zeppelin-solidity/contracts/ sol/zeppelin-solidity/contracts/
 ```
 
 Generate go bindings from solidity contract (if sol sources modified)
 
 ```console
-$GOPATH/src/github.com/ethereum/go-ethereum/build/bin/abigen --sol sol/ChangeableRateCrowdsale.sol --pkg=contract --out=contract/ChangeableRateCrowdsale.go
+$GOPATH/src/github.com/ethereum/go-ethereum/build/bin/abigen --sol sol/HoQuClaim.sol --pkg=contract --out=contract/HoQuClaim.go
 ```
 
 Alternatively you can generate go bindings from assembled solidity contract
 
 ```console
-$GOPATH/src/github.com/ethereum/go-ethereum/build/bin/abigen --sol sol/assembled/ChangeableRateCrowdsale.sol --pkg=contract --out=contract/ChangeableRateCrowdsale.go
+$GOPATH/src/github.com/ethereum/go-ethereum/build/bin/abigen --sol sol/assembled/HoQuClaim.sol --pkg=contract --out=contract/HoQuClaim.go
 ```

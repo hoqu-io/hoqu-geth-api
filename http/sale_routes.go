@@ -22,6 +22,7 @@ func initSaleRoutes(router *gin.Engine) {
         sale.POST("/add", middleware.SignRequired(), postSaleAddAction)
         sale.POST("/topup", middleware.SignRequired(), postSaleTopUpAction)
         sale.POST("/approve", middleware.SignRequired(), postSaleApproveAction)
+        sale.POST("/claim", middleware.SignRequired(), postSaleClaimAllAction)
     }
 }
 
@@ -51,16 +52,6 @@ func getSaleSummaryAction(c *gin.Context) {
         rest.NewResponder(c).Error(err.Error())
         return
     }
-
-    bSum, err := geth.GetBounty().Summary()
-    if err != nil {
-        rest.NewResponder(c).Error(err.Error())
-        return
-    }
-
-    sIssued, _ := big.NewInt(0).SetString(sum.IssuedTokensAmount, 0)
-    bIssued, _ := big.NewInt(0).SetString(bSum.IssuedTokensAmount, 0)
-    sum.IssuedTokensAmount = big.NewInt(0).Add(sIssued, bIssued).String()
 
     rest.NewResponder(c).Success(gin.H{
         "summary": sum,
@@ -226,6 +217,18 @@ func postSaleApproveAction(c *gin.Context) {
     }
 
     tx, err := geth.GetSale().Approve(request.Address)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "tx": tx.String(),
+    })
+}
+
+func postSaleClaimAllAction(c *gin.Context) {
+    tx, err := geth.GetSale().ClaimAll()
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

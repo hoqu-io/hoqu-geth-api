@@ -22,6 +22,7 @@ func initRoutes(router *gin.Engine) {
         initPresaleRoutes(router)
         initSaleRoutes(router)
         initBountyRoutes(router)
+        initClaimRoutes(router)
         initHoQuConfigRoutes(router)
         initHoquPlatformRoutes(router)
     })

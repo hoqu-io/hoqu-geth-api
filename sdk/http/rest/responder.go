@@ -4,6 +4,7 @@ import (
     "github.com/gin-gonic/gin"
     "net/http"
     "hoqu-geth-api/sdk/models"
+    "github.com/sirupsen/logrus"
 )
 
 const (
@@ -40,6 +41,8 @@ func (resp Responder) ErrorAuthorization() {
     resp.ErrorWithCode(http.StatusUnauthorized, ErrorAuthorization, "Auth required")
 }
 func (resp Responder) ErrorWithCode(httpCode int, restCode string, message interface{}) {
+    defer logrus.Errorf("Responding with error: %v", message)
+
     data := &models.RestResponse{
         Error: models.RestError{
             Code:    restCode,

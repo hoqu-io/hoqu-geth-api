@@ -10,6 +10,7 @@ import (
     "hoqu-geth-api/geth/models"
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
+    "math/big"
 )
 
 var config *HoQuConfig
@@ -63,7 +64,10 @@ func (s *HoQuConfig) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
         hashAddrs = append(hashAddrs, common.HexToHash(addr))
     }
 
-    events, err := s.GetEventsByTopics([][]common.Hash{{}, hashAddrs})
+    events, err := s.GetEventsByTopics(
+        [][]common.Hash{{}, hashAddrs},
+        big.NewInt(viper.GetInt64("geth.start_block.conf")),
+    )
     if err != nil {
         return nil, err
     }

@@ -44,6 +44,10 @@ func InitGeth() error {
         return err
     }
 
+    if err := InitClaim(); err != nil {
+        return err
+    }
+
     if err := initHoQuConfig(); err != nil {
         return err
     }

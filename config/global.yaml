@@ -6,6 +6,11 @@ server:
   url: http://geth-node.hoqu.io
 geth:
   endpoint: https://rinkeby.infura.io
+  nonce_gap: 15
+  nonce_replacement_timeout: 180
+  gas_price: 50
+  gas_limit: 95000
+  tx_delay: 5
   main:
     key_file: data/keys/testnet_main
     pass: key_pass_here
@@ -13,9 +18,21 @@ geth:
     token: 0x1008ba59af5a1efb7db4c10a6d200503785c62f7
     privPlace: 0x020225f157d4e99055356597556d0f6fb06d1184
     presale: 0x4095b16300B89ecB2cDa7f0AB6C01a783b91Db4F
-    sale: 0xD8A9f3A5Ee60EFFC2918Ce7Aa9885cb31aa1C1D8
+    sale: 0xd0eE519E170f272EEB2f1e895E95A719B858D998
     bounty: 0x839b3D7Bf114921cCE7162c2Ad49260Bf618A1bB
+    claim: 0x639D010dC63c2d98aa506418a7BD7fdA470FCF28
     conf: 0xf24F798967fb013e0BA5B45C12b88E71aC3B2509
     platform: 0x5eb4eff60ad15fB516BA35E73D027cAAf2a9f7a5
+  start_block:
+    privPlace: 857820
+    presale: 857820
+    sale: 857820
+    bounty: 857820
+    claim: 1603404
+    conf: 857820
+    platform: 857820
+  claim:
+    batch_limit: 3
+    batch_timeout: 1
 security:
   sign: simple-string-by-default

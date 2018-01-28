@@ -12,6 +12,7 @@ import (
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
+    "github.com/sirupsen/logrus"
 )
 
 var bounty *Bounty
@@ -103,7 +104,10 @@ func (s *Bounty) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
         hashAddrs = append(hashAddrs, common.HexToHash(addr))
     }
 
-    events, err := s.GetEventsByTopics([][]common.Hash{{}, hashAddrs})
+    events, err := s.GetEventsByTopics(
+        [][]common.Hash{{}, hashAddrs},
+        big.NewInt(viper.GetInt64("geth.start_block.bounty")),
+    )
     if err != nil {
         return nil, err
     }
@@ -135,19 +139,49 @@ func (s *Bounty) AddByBounty(addr string, tokens string) (common.Hash, error) {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
     }
 
-    tx, err := s.Bounty.AddByBounty(s.Wallet.Account, common.HexToAddress(addr), tokensAmount)
+    opts, err := s.Wallet.GetTransactOpts()
     if err != nil {
+        s.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := s.Bounty.AddByBounty(opts, common.HexToAddress(addr), tokensAmount)
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+
+        if s.Wallet.ValidateRepeatableTransaction(err) {
+            logrus.Warn("Repeat AddByBounty to ", addr)
+
+            return s.AddByBounty(addr, tokens)
+        }
+
+        return common.Hash{}, err
+    }
+    s.Wallet.OnSuccessTransaction()
 
     return tx.Hash(), nil
 }
 
 func (s *Bounty) Approve(addr string) (common.Hash, error) {
-    tx, err := s.Bounty.Approve(s.Wallet.Account, common.HexToAddress(addr))
+    opts, err := s.Wallet.GetTransactOpts()
     if err != nil {
+        s.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := s.Bounty.Approve(opts, common.HexToAddress(addr))
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+
+        if s.Wallet.ValidateRepeatableTransaction(err) {
+            logrus.Warn("Repeat Approve to ", addr)
+
+            return s.Approve(addr)
+        }
+
+        return common.Hash{}, err
+    }
+    s.Wallet.OnSuccessTransaction()
 
     return tx.Hash(), nil
 }

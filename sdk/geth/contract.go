@@ -8,6 +8,7 @@ import (
     "hoqu-geth-api/sdk/models"
     "fmt"
     "github.com/ethereum/go-ethereum"
+    "math/big"
 )
 
 type Contract struct {
@@ -38,12 +39,13 @@ func (c *Contract) InitEvents(contractAbi string) (err error) {
     return
 }
 
-func (c *Contract) GetEventsByTopics(topics [][]common.Hash) ([]models.ContractEvent, error) {
+func (c *Contract) GetEventsByTopics(topics [][]common.Hash, fromBlock *big.Int) ([]models.ContractEvent, error) {
     query := ethereum.FilterQuery{
         Addresses: []common.Address{
             c.Address,
         },
         Topics: topics,
+        FromBlock: fromBlock,
     }
 
     res, err := c.Wallet.Connection.FilterLogs(context.TODO(), query)

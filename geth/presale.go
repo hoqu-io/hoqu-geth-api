@@ -12,6 +12,7 @@ import (
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
+    "github.com/sirupsen/logrus"
 )
 
 var presale *Presale
@@ -141,7 +142,10 @@ func (p *Presale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
         hashAddrs = append(hashAddrs, common.HexToHash(addr))
     }
 
-    events, err := p.GetEventsByTopics([][]common.Hash{{}, hashAddrs})
+    events, err := p.GetEventsByTopics(
+        [][]common.Hash{{}, hashAddrs},
+        big.NewInt(viper.GetInt64("geth.start_block.presale")),
+    )
     if err != nil {
         return nil, err
     }
@@ -174,14 +178,19 @@ func (p *Presale) Add(addr string, tokens string) (common.Hash, error) {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
     }
 
-    tx, err := p.Presale.Add(&bind.TransactOpts{
-        From:     p.Wallet.Account.From,
-        Signer:   p.Wallet.Account.Signer,
-        GasLimit: big.NewInt(120000),
-    }, common.HexToAddress(addr), tokensAmount)
+    opts, err := p.Wallet.GetTransactOpts()
     if err != nil {
+        p.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := p.Presale.Add(opts, common.HexToAddress(addr), tokensAmount)
+    if err != nil {
+        p.Wallet.OnFailTransaction(err)
+
+        return common.Hash{}, err
+    }
+    p.Wallet.OnSuccessTransaction()
 
     return tx.Hash(), nil
 }
@@ -192,23 +201,43 @@ func (p *Presale) TopUp(addr string, tokens string) (common.Hash, error) {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", tokens)
     }
 
-    tx, err := p.Presale.TopUp(&bind.TransactOpts{
-        From:     p.Wallet.Account.From,
-        Signer:   p.Wallet.Account.Signer,
-        GasLimit: big.NewInt(120000),
-    }, common.HexToAddress(addr), tokensAmount)
+    opts, err := p.Wallet.GetTransactOpts()
     if err != nil {
+        p.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := p.Presale.TopUp(opts, common.HexToAddress(addr), tokensAmount)
+    if err != nil {
+        p.Wallet.OnFailTransaction(err)
+
+        return common.Hash{}, err
+    }
+    p.Wallet.OnSuccessTransaction()
 
     return tx.Hash(), nil
 }
 
 func (p *Presale) Approve(addr string) (common.Hash, error) {
-    tx, err := p.Presale.Approve(p.Wallet.Account, common.HexToAddress(addr))
+    opts, err := p.Wallet.GetTransactOpts()
     if err != nil {
+        p.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := p.Presale.Approve(opts, common.HexToAddress(addr))
+    if err != nil {
+        p.Wallet.OnFailTransaction(err)
+
+        if p.Wallet.ValidateRepeatableTransaction(err) {
+            logrus.Warn("Repeat Approve to ", addr)
+
+            return p.Approve(addr)
+        }
+
+        return common.Hash{}, err
+    }
+    p.Wallet.OnSuccessTransaction()
 
     return tx.Hash(), nil
 }

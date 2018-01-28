@@ -12,6 +12,7 @@ import (
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
+    "github.com/sirupsen/logrus"
 )
 
 var sale *Sale
@@ -141,31 +142,40 @@ func (s *Sale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
         hashAddrs = append(hashAddrs, common.HexToHash(addr))
     }
 
-    events, err := s.GetEventsByTopics([][]common.Hash{{}, hashAddrs})
+    events, err := s.GetEventsByTopics(
+        [][]common.Hash{{}, hashAddrs},
+        big.NewInt(viper.GetInt64("geth.start_block.sale")),
+    )
     if err != nil {
         return nil, err
     }
 
-    for key, event := range events {
+    resEvents := make([]sdkModels.ContractEvent, 0)
+
+    for _, event := range events {
+        addr := common.BytesToAddress(event.RawArgs[0])
+
         switch {
         case event.Name == "TokenBought" || event.Name == "TokenAdded" || event.Name == "TokenToppedUp" ||
-        event.Name == "TokenSubtracted":
-            events[key].Args = models.TokenAddedEventArgs{
-                Address:     common.BytesToAddress(event.RawArgs[0]).String(),
+            event.Name == "TokenSubtracted":
+            event.Args = models.TokenAddedEventArgs{
+                Address:     addr.String(),
                 TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),
                 EtherAmount: common.BytesToHash(event.RawArgs[2]).Big().String(),
             }
         case event.Name == "TokenSent":
-            events[key].Args = models.TokenSentEventAgrs{
-                Address:     common.BytesToAddress(event.RawArgs[0]).String(),
+            event.Args = models.TokenSentEventAgrs{
+                Address:     addr.String(),
                 TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),
             }
         default:
             return nil, fmt.Errorf("unknown event type: %s", event.Name)
         }
+
+        resEvents = append(resEvents, event)
     }
 
-    return events, nil
+    return resEvents, nil
 }
 
 func (s *Sale) Add(addr string, eqEthAmount string) (common.Hash, error) {
@@ -174,33 +184,106 @@ func (s *Sale) Add(addr string, eqEthAmount string) (common.Hash, error) {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", eqEthAmount)
     }
 
-    tx, err := s.Sale.Add(s.Wallet.Account, common.HexToAddress(addr), ethAmount)
+    opts, err := s.Wallet.GetTransactOpts()
     if err != nil {
+        s.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := s.Sale.Add(opts, common.HexToAddress(addr), ethAmount)
+    if err != nil {
+        logrus.Error("Add failed ", err.Error())
+        s.Wallet.OnFailTransaction(err)
+
+        if s.Wallet.ValidateRepeatableTransaction(err) {
+            logrus.Warn("Repeat Add to ", addr)
+
+            return s.Add(addr, eqEthAmount)
+        }
+
+        return common.Hash{}, err
+    }
+    s.Wallet.OnSuccessTransaction()
+
+    logrus.Info("Add to ", addr, " tx ", tx.Hash().String())
 
     return tx.Hash(), nil
 }
 
 func (s *Sale) TopUp(addr string, eqEthAmount string) (common.Hash, error) {
+    return common.Hash{}, fmt.Errorf("disabled")
+
     ethAmount, ok := big.NewInt(0).SetString(eqEthAmount, 0)
     if !ok {
         return common.Hash{}, fmt.Errorf("wrong number provided: %s", eqEthAmount)
     }
 
-    tx, err := s.Sale.TopUp(s.Wallet.Account, common.HexToAddress(addr), ethAmount)
+    opts, err := s.Wallet.GetTransactOpts()
     if err != nil {
+        s.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := s.Sale.TopUp(opts, common.HexToAddress(addr), ethAmount)
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+
+        if s.Wallet.ValidateRepeatableTransaction(err) {
+            logrus.Warn("Repeat TopUp to ", addr)
+
+            return s.TopUp(addr, eqEthAmount)
+        }
+
+        return common.Hash{}, err
+    }
+    s.Wallet.OnSuccessTransaction()
+
+    logrus.Info("TopUp to ", addr, " tx ", tx.Hash().String())
 
     return tx.Hash(), nil
 }
 
 func (s *Sale) Approve(addr string) (common.Hash, error) {
-    tx, err := s.Sale.Approve(s.Wallet.Account, common.HexToAddress(addr))
+    opts, err := s.Wallet.GetTransactOpts()
     if err != nil {
+        s.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
+
+    tx, err := s.Sale.Approve(opts, common.HexToAddress(addr))
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+
+        if s.Wallet.ValidateRepeatableTransaction(err) {
+            logrus.Warn("Repeat Approve to ", addr)
+
+            return s.Approve(addr)
+        }
+
+        return common.Hash{}, err
+    }
+    s.Wallet.OnSuccessTransaction()
+
+    logrus.Info("Approve ", addr, " tx ", tx.Hash().String())
+
+    return tx.Hash(), nil
+}
+
+func (s *Sale) ClaimAll() (common.Hash, error) {
+    opts, err := s.Wallet.GetTransactOpts()
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+        return common.Hash{}, err
+    }
+
+    tx, err := s.Sale.ClaimAll(opts)
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+        return common.Hash{}, err
+    }
+    s.Wallet.OnSuccessTransaction()
+
+    logrus.Info("ClaimAll tx ", tx.Hash().String())
 
     return tx.Hash(), nil
 }

@@ -408,7 +408,10 @@ func (hp *HoquPlatform) Events(addrs []string) ([]sdkModels.ContractEvent, error
         hashAddrs = append(hashAddrs, common.HexToHash(addr))
     }
 
-    events, err := hp.GetEventsByTopics([][]common.Hash{{}, hashAddrs})
+    events, err := hp.GetEventsByTopics(
+        [][]common.Hash{{}, hashAddrs},
+        big.NewInt(viper.GetInt64("geth.start_block.platform")),
+    )
     if err != nil {
         return nil, err
     }
