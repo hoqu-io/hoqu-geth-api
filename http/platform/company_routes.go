@@ -4,8 +4,6 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "strconv"
-    "fmt"
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
 )
@@ -19,6 +17,18 @@ func InitCompanyRoutes(routerGroup *gin.RouterGroup) {
     }
 }
 
+// swagger:route POST /platform/company/register companies registerCompany
+//
+// Register Company.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: AddSuccessResponse
+//   400: RestErrorResponse
+//
 func postRegisterCompanyAction(c *gin.Context) {
     request := &models.RegisterCompanyRequest{}
     err := c.BindJSON(request)
@@ -27,7 +37,7 @@ func postRegisterCompanyAction(c *gin.Context) {
         return
     }
 
-    tx, err := geth.GetHoquPlatform().RegisterCompany(request)
+    tx, id, err := geth.GetHoquPlatform().RegisterCompany(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -35,9 +45,22 @@ func postRegisterCompanyAction(c *gin.Context) {
 
     rest.NewResponder(c).Success(gin.H{
         "tx": tx.String(),
+        "id": id,
     })
 }
 
+// swagger:route POST /platform/company/status companies setCompanyStatus
+//
+// Set Company Status.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: TxSuccessResponse
+//   400: RestErrorResponse
+//
 func postSetCompanyStatusAction(c *gin.Context) {
     request := &models.SetStatusRequest{}
     err := c.BindJSON(request)
@@ -57,14 +80,20 @@ func postSetCompanyStatusAction(c *gin.Context) {
     })
 }
 
+// swagger:route GET /platform/company/:id companies getCompany
+//
+// Get Company by ID.
+//
+// Produces:
+// - application/json
+// Responses:
+//   200: CompanyDataResponse
+//   400: RestErrorResponse
+//
 func getCompanyAction(c *gin.Context) {
-    id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-    if err != nil {
-        rest.NewResponder(c).Error(fmt.Errorf("wrong Company id provided: %v", err.Error()))
-        return
-    }
+    id := c.Param("id")
 
-    company, err := geth.GetHoquPlatform().GetCompany(uint32(id))
+    company, err := geth.GetHoquPlatform().GetCompany(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

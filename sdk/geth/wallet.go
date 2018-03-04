@@ -15,6 +15,7 @@ import (
     "time"
     "github.com/spf13/viper"
     "math/rand"
+    "github.com/ethereum/go-ethereum/core/types"
 )
 
 var Kilo *big.Int = big.NewInt(1e3)
@@ -76,6 +77,14 @@ func GetWallet() *Wallet {
 
 func (w *Wallet) BalanceAt(addr string) (*big.Int, error) {
     return w.Connection.BalanceAt(context.TODO(), common.HexToAddress(addr), nil)
+}
+
+func (w *Wallet) GetBlockHeaderByNumber(number *big.Int) (*types.Header, error) {
+    return w.Connection.HeaderByNumber(context.TODO(), number)
+}
+
+func (w *Wallet) GetBlockHeaderByHash(hash common.Hash) (*types.Header, error) {
+    return w.Connection.HeaderByHash(context.TODO(), hash)
 }
 
 // WARNING!!!

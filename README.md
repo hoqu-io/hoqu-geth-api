@@ -91,11 +91,22 @@ rsync -vax vendor/github.com/OpenZeppelin/zeppelin-solidity/contracts/ sol/zeppe
 Generate go bindings from solidity contract (if sol sources modified)
 
 ```console
-$GOPATH/src/github.com/ethereum/go-ethereum/build/bin/abigen --sol sol/HoQuClaim.sol --pkg=contract --out=contract/HoQuClaim.go
+$GOPATH/src/github.com/ethereum/go-ethereum/build/bin/abigen --sol sol/HoQuPlatform.sol --pkg=platform --out=contract/platform/HoQuPlatform.go
 ```
 
 Alternatively you can generate go bindings from assembled solidity contract
 
 ```console
 $GOPATH/src/github.com/ethereum/go-ethereum/build/bin/abigen --sol sol/assembled/HoQuClaim.sol --pkg=contract --out=contract/HoQuClaim.go
+```
+
+### Generate API documentation
+
+Install [go-swagger](https://github.com/go-swagger/go-swagger)
+
+Generate swagger.json
+
+```console
+cd $GOPATH/src/hoqu-geth-api
+swagger generate spec -o ./data/docs/swagger.json
 ```

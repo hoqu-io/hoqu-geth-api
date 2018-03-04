@@ -1,0 +1,1587 @@
+{
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "swagger": "2.0",
+  "info": {
+    "description": "Provides all projects the opportunity to access Ethereum blockchain through RESTful API.",
+    "title": "HOQU blockchain API by GoLang.",
+    "contact": {
+      "name": "Denis Degterin",
+      "url": "https://github.com/hoqu-io/hoqu-geth-api",
+      "email": "d.degterin@gmail.com"
+    },
+    "license": {
+      "name": "MIT",
+      "url": "http://opensource.org/licenses/MIT"
+    },
+    "version": "0.3.1"
+  },
+  "basePath": "/",
+  "paths": {
+    "/platform/ad/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "ads"
+        ],
+        "summary": "Get Ad by ID.",
+        "operationId": "getAd",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
+            "x-go-name": "Id",
+            "description": "an ID of the requested entity",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AdDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/ad/add": {
+      "post": {
+        "description": "The Ad is a campaign of the affiliate to promote particular offer.\nThe Ad is created by the affiliate. All widgets placed on affiliate website should be linked to particular Ad.\nThe affiliate can specify money receiver address (beneficiary) per each Ad.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "ads"
+        ],
+        "summary": "Add Ad.",
+        "operationId": "addAd",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddAdRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/ad/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "ads"
+        ],
+        "summary": "Set Ad Status.",
+        "operationId": "setAdStatus",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/company/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "companies"
+        ],
+        "summary": "Get Company by ID.",
+        "operationId": "getCompany",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
+            "x-go-name": "Id",
+            "description": "an ID of the requested entity",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/CompanyDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/company/register": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "companies"
+        ],
+        "summary": "Register Company.",
+        "operationId": "registerCompany",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/RegisterCompanyRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/company/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "companies"
+        ],
+        "summary": "Set Company Status.",
+        "operationId": "setCompanyStatus",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/events": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "platform"
+        ],
+        "summary": "Get HOQU platform events.",
+        "operationId": "events",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/Events"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/ContractEventResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/lead/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "leads"
+        ],
+        "summary": "Get Lead by ID.",
+        "operationId": "getLead",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
+            "x-go-name": "Id",
+            "description": "an ID of the requested lead",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/LeadDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/lead/add": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "leads"
+        ],
+        "summary": "Add Lead.",
+        "operationId": "addLead",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddLeadRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/lead/intermediary": {
+      "post": {
+        "description": "Each intermediary is a money receiver when selling the lead.\nWarning! Lead owner shouldn't be in this list. Owner receives the rest of amount.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "leads"
+        ],
+        "summary": "Add Lead Intermediary.",
+        "operationId": "addLeadIntermediary",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddLeadIntermediaryRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/lead/sell": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "leads"
+        ],
+        "summary": "Sell Lead.",
+        "operationId": "sellLead",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/IdRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/lead/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "leads"
+        ],
+        "summary": "Set Lead Status.",
+        "operationId": "setLeadStatus",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/offer/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "offers"
+        ],
+        "summary": "Get Offer by ID.",
+        "operationId": "getOffer",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
+            "x-go-name": "Id",
+            "description": "an ID of the requested entity",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/OfferDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/offer/add": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "offers"
+        ],
+        "summary": "Add Offer.",
+        "operationId": "addOffer",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddOfferRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/offer/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "offers"
+        ],
+        "summary": "Set Offer Status.",
+        "operationId": "setOfferStatus",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tracker/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "trackers"
+        ],
+        "summary": "Get Tracker by ID.",
+        "operationId": "getTracker",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
+            "x-go-name": "Id",
+            "description": "an ID of the requested entity",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TrackerDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tracker/register": {
+      "post": {
+        "description": "The Tracker is an application which receives visitor's requests to show the appropriate widget.\nAll widgets can be created in terms of appropriate Ad (affiliate promotion campaign).\nIf visitor interacts with a widget the Tracker creates the Lead and push it to Blockchain.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "trackers"
+        ],
+        "summary": "Register Tracker.",
+        "operationId": "registerTracker",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/RegisterTrackerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tracker/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "trackers"
+        ],
+        "summary": "Set Tracker Status.",
+        "operationId": "setTrackerStatus",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/user/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Get User by ID.",
+        "operationId": "getUser",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
+            "x-go-name": "Id",
+            "description": "an ID of the requested entity",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/UserDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/user/address": {
+      "post": {
+        "description": "Each User can have several Ethereum addresses.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Add User Ethereum Address.",
+        "operationId": "addUserAddress",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddUserAddressRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/user/kyc": {
+      "post": {
+        "description": "Each User has KYC level which reflects his trust level.\nUser KYC level can be changed only by KYC reports.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Add User KYC report.",
+        "operationId": "addUserKyc",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddUserKycReportRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/user/register": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Register User.",
+        "operationId": "registerUser",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/RegisterUserRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/user/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "users"
+        ],
+        "summary": "Set User Status.",
+        "operationId": "setUserStatus",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "AdData": {
+      "description": "Ad Model",
+      "type": "object",
+      "properties": {
+        "beneficiaryAddress": {
+          "description": "Ethereum address of the beneficiary (Ad money receiver)",
+          "type": "string",
+          "x-go-name": "BeneficiaryAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "createdAt": {
+          "description": "unix timestamp",
+          "type": "string",
+          "x-go-name": "CreatedAt",
+          "example": "1518957879"
+        },
+        "offerId": {
+          "description": "the ID of an Offer the entity is linked to",
+          "type": "string",
+          "x-go-name": "OfferId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "ownerId": {
+          "description": "the ID of an User owned the entity",
+          "type": "string",
+          "x-go-name": "OwnerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "AddAdRequest": {
+      "type": "object",
+      "properties": {
+        "beneficiaryAddress": {
+          "description": "Ethereum address of the beneficiary (Ad money receiver)",
+          "type": "string",
+          "x-go-name": "BeneficiaryAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "offerId": {
+          "description": "the ID of an Offer the entity is linked to",
+          "type": "string",
+          "x-go-name": "OfferId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "ownerId": {
+          "description": "the ID of an User owned the entity",
+          "type": "string",
+          "x-go-name": "OwnerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "AddLeadIntermediaryRequest": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Ethereum address of the intermediary",
+          "type": "string",
+          "x-go-name": "Address",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "id": {
+          "description": "Lead ID the intermediary is adding to",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "percent": {
+          "description": "the percent of a final price of the Lead this intermediary should receive",
+          "type": "number",
+          "format": "float",
+          "x-go-name": "Percent",
+          "example": 0.045
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "AddLeadRequest": {
+      "type": "object",
+      "properties": {
+        "adId": {
+          "description": "the ID of an Ad the lead was created for",
+          "type": "string",
+          "x-go-name": "AdId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "dataUrl": {
+          "description": "the full lead data URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "meta": {
+          "description": "Lead meta data in JSON",
+          "type": "string",
+          "x-go-name": "Meta",
+          "example": "{\"country\": \"DE\", \"ip\": \"123.44.55.66\"}"
+        },
+        "price": {
+          "description": "the final price of the lead in HQX",
+          "type": "string",
+          "x-go-name": "Price",
+          "example": "25000000000000000"
+        },
+        "trackerId": {
+          "description": "the ID of a Tracker created the lead",
+          "type": "string",
+          "x-go-name": "TrackerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "AddOfferRequest": {
+      "type": "object",
+      "properties": {
+        "companyId": {
+          "description": "the ID of a Company the entity is linked to",
+          "type": "string",
+          "x-go-name": "CompanyId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "cost": {
+          "description": "the cost of the leads in HQX",
+          "type": "string",
+          "x-go-name": "Cost",
+          "example": "25000000000000000"
+        },
+        "dataUrl": {
+          "description": "the offer full data URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "name": {
+          "description": "the name of the Offer",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "payerAddress": {
+          "description": "Ethereum address of the Offer payer (who will pay for leads)",
+          "type": "string",
+          "x-go-name": "PayerAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "AddUserAddressRequest": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Ethereum address of the user",
+          "type": "string",
+          "x-go-name": "Address",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "id": {
+          "description": "an ID of the user",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "AddUserKycReportRequest": {
+      "type": "object",
+      "properties": {
+        "dataUrl": {
+          "description": "the URL with full report data",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "id": {
+          "description": "an ID of the user",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "kycLevel": {
+          "description": "Higher the level more trust this user has from other participants",
+          "type": "integer",
+          "format": "uint8",
+          "x-go-name": "KycLevel",
+          "example": 3
+        },
+        "meta": {
+          "description": "Meta data of the report in string format (JSON for example)",
+          "type": "string",
+          "x-go-name": "Meta"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "CompanyData": {
+      "description": "Company Model",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "unix timestamp",
+          "type": "string",
+          "x-go-name": "CreatedAt",
+          "example": "1518957879"
+        },
+        "dataUrl": {
+          "description": "the company description URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "name": {
+          "description": "the name of the company",
+          "type": "string",
+          "x-go-name": "Name",
+          "example": "HOQU LLC"
+        },
+        "ownerAddress": {
+          "description": "Ethereum address of the owner",
+          "type": "string",
+          "x-go-name": "OwnerAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "ownerId": {
+          "description": "the ID of an User owned the entity",
+          "type": "string",
+          "x-go-name": "OwnerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "Events": {
+      "type": "object",
+      "properties": {
+        "addresses": {
+          "description": "filter events by list of Ethereum addresses",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Addresses"
+        },
+        "eventNames": {
+          "description": "filter events by list of event names",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "EventNames"
+        },
+        "latest": {
+          "description": "get events of only latest N blocks",
+          "type": "integer",
+          "format": "int64",
+          "x-go-name": "Latest"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "IdRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "id of entity",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "LeadData": {
+      "description": "Lead Model",
+      "type": "object",
+      "properties": {
+        "adId": {
+          "description": "the ID of an Ad the lead was created for",
+          "type": "string",
+          "x-go-name": "AdId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "createdAt": {
+          "description": "unix timestamp",
+          "type": "string",
+          "x-go-name": "CreatedAt",
+          "example": "1518957879"
+        },
+        "dataUrl": {
+          "description": "the full lead data URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "intermediaries": {
+          "description": "a list of ethAddress -\u003e percent of all money receivers (except owner itself)",
+          "type": "object",
+          "additionalProperties": {
+            "type": "number",
+            "format": "float"
+          },
+          "x-go-name": "Intermediaries",
+          "example": "{\"0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD\": 0.035}"
+        },
+        "meta": {
+          "description": "Lead meta data in JSON",
+          "type": "string",
+          "x-go-name": "Meta"
+        },
+        "price": {
+          "description": "the final price of the lead in HQX",
+          "type": "string",
+          "x-go-name": "Price",
+          "example": "25000000000000000"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "trackerId": {
+          "description": "the ID of a Tracker created the lead",
+          "type": "string",
+          "x-go-name": "TrackerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "OfferData": {
+      "description": "Offer Model",
+      "type": "object",
+      "properties": {
+        "companyId": {
+          "description": "the ID of a Company the entity is linked to",
+          "type": "string",
+          "x-go-name": "CompanyId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "cost": {
+          "description": "the cost of the leads in HQX",
+          "type": "string",
+          "x-go-name": "Cost",
+          "example": "25000000000000000"
+        },
+        "createdAt": {
+          "description": "unix timestamp",
+          "type": "string",
+          "x-go-name": "CreatedAt",
+          "example": "1518957879"
+        },
+        "dataUrl": {
+          "description": "the offer full data URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "name": {
+          "description": "the name of the Offer",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "payerAddress": {
+          "description": "Ethereum address of the Offer payer (who will pay for leads)",
+          "type": "string",
+          "x-go-name": "PayerAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "RegisterCompanyRequest": {
+      "type": "object",
+      "properties": {
+        "dataUrl": {
+          "description": "the company description URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "name": {
+          "description": "the name of the company",
+          "type": "string",
+          "x-go-name": "Name",
+          "example": "HOQU LLC"
+        },
+        "ownerAddress": {
+          "description": "Ethereum address of the owner",
+          "type": "string",
+          "x-go-name": "OwnerAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "ownerId": {
+          "description": "the ID of an User owned the entity",
+          "type": "string",
+          "x-go-name": "OwnerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "RegisterTrackerRequest": {
+      "type": "object",
+      "properties": {
+        "dataUrl": {
+          "description": "the Tracker full data URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "name": {
+          "description": "the name of the Tracker",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "ownerAddress": {
+          "description": "Ethereum address of the owner",
+          "type": "string",
+          "x-go-name": "OwnerAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "RegisterUserRequest": {
+      "type": "object",
+      "properties": {
+        "address": {
+          "description": "Ethereum address of the user",
+          "type": "string",
+          "x-go-name": "Address",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "pubKey": {
+          "description": "all private data available only for that user is encrypted by his public key",
+          "type": "string",
+          "x-go-name": "PubKey"
+        },
+        "role": {
+          "description": "user role",
+          "type": "string",
+          "x-go-name": "Role",
+          "example": "affiliate"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "SetStatusRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "id of entity",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "Status": {
+      "description": "status, one of 0:NotExists, 1:Created, 2:Pending, 3:Active, 4:Done, 5:Declined",
+      "type": "integer",
+      "format": "uint8",
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "TrackerData": {
+      "description": "Tracker Model",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "unix timestamp",
+          "type": "string",
+          "x-go-name": "CreatedAt",
+          "example": "1518957879"
+        },
+        "dataUrl": {
+          "description": "the Tracker full data URL",
+          "type": "string",
+          "x-go-name": "DataUrl"
+        },
+        "name": {
+          "description": "the name of the Tracker",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "ownerAddress": {
+          "description": "Ethereum address of the owner",
+          "type": "string",
+          "x-go-name": "OwnerAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    },
+    "UserData": {
+      "description": "User Model",
+      "type": "object",
+      "properties": {
+        "addresses": {
+          "description": "a list of Ethereum addresses of the user",
+          "x-go-name": "Addresses",
+          "example": "[\"0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD\"]"
+        },
+        "createdAt": {
+          "description": "unix timestamp",
+          "type": "string",
+          "x-go-name": "CreatedAt",
+          "example": "1518957879"
+        },
+        "kycLevel": {
+          "description": "Higher the level more trust this user has from other participants",
+          "type": "integer",
+          "format": "uint8",
+          "x-go-name": "KycLevel",
+          "example": 3
+        },
+        "kycReports": {
+          "description": "a list of all KYC reports",
+          "x-go-name": "KycReports"
+        },
+        "pubKey": {
+          "description": "all private data available only for that user is encrypted by his public key",
+          "type": "string",
+          "x-go-name": "PubKey"
+        },
+        "role": {
+          "description": "user role",
+          "type": "string",
+          "x-go-name": "Role",
+          "example": "affiliate"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/geth/models"
+    }
+  },
+  "responses": {
+    "AdDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "Ad": {
+                "$ref": "#/definitions/AdData"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "AddSuccessResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "description": "id of created entity",
+                "type": "string",
+                "x-go-name": "Id",
+                "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+              },
+              "tx": {
+                "description": "Ethereum transaction hash",
+                "type": "string",
+                "x-go-name": "Tx",
+                "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "CompanyDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "Company": {
+                "$ref": "#/definitions/CompanyData"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "ContractEventResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "events": {
+                "type": "object",
+                "properties": {
+                  "args": {
+                    "description": "event arguments, differ for each event",
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "description": "entity ID this event is linked to",
+                        "type": "string",
+                        "x-go-name": "Id",
+                        "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+                      },
+                      "ownerAddress": {
+                        "description": "Ethereum address this events is linked to",
+                        "type": "string",
+                        "x-go-name": "OwnerAddress",
+                        "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+                      },
+                      "status": {
+                        "$ref": "#/definitions/Status"
+                      }
+                    },
+                    "x-go-name": "Args"
+                  },
+                  "blockHash": {
+                    "type": "string",
+                    "x-go-name": "BlockHash"
+                  },
+                  "blockNumber": {
+                    "description": "Ethereum block number event was raised in",
+                    "type": "integer",
+                    "format": "uint64",
+                    "x-go-name": "BlockNumber",
+                    "example": 4589232
+                  },
+                  "blockTime": {
+                    "type": "string",
+                    "x-go-name": "BlockTime"
+                  },
+                  "name": {
+                    "description": "event name",
+                    "type": "string",
+                    "x-go-name": "Name",
+                    "example": "LeadStatusChanged"
+                  },
+                  "removed": {
+                    "type": "boolean",
+                    "x-go-name": "Removed"
+                  },
+                  "transactionHash": {
+                    "description": "Ethereum transaction hash",
+                    "type": "string",
+                    "x-go-name": "TxHash",
+                    "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
+                  },
+                  "transactionIndex": {
+                    "type": "integer",
+                    "format": "uint64",
+                    "x-go-name": "TxIndex"
+                  }
+                },
+                "x-go-name": "Events"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "LeadDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "Lead": {
+                "$ref": "#/definitions/LeadData"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "OfferDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "Offer": {
+                "$ref": "#/definitions/OfferData"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "RestErrorResponse": {
+      "description": "Error",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "description": "error code",
+                "type": "string",
+                "x-go-name": "Code",
+                "example": "VALIDATION_ERROR"
+              },
+              "message": {
+                "description": "error description",
+                "type": "string",
+                "x-go-name": "Message",
+                "example": "id should be in UUID format"
+              }
+            },
+            "x-go-name": "Error"
+          }
+        }
+      }
+    },
+    "TrackerDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "Tracker": {
+                "$ref": "#/definitions/TrackerData"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "TxSuccessResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "tx": {
+                "description": "Ethereum transaction hash",
+                "type": "string",
+                "x-go-name": "Tx",
+                "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
+    "UserDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "User": {
+                "$ref": "#/definitions/UserData"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "hash": {
+      "type": "apiKey",
+      "name": "X-Sign",
+      "in": "header"
+    },
+    "jwt": {
+      "type": "apiKey",
+      "name": "X-Authorization",
+      "in": "header"
+    }
+  }
+}

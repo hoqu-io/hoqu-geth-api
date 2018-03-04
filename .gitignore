@@ -1,7 +1,7 @@
 .idea
 vendor/*
 !vendor/vendor.json
-config/local.yaml
+config/local*
 hoqu-geth-api*
 sol/zeppelin-solidity/contracts/*
 !sol/zeppelin-solidity/contracts/readme.md

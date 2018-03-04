@@ -12,6 +12,7 @@ import (
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/sirupsen/logrus"
+    "github.com/satori/go.uuid"
     "time"
     "sync"
 )
@@ -25,6 +26,7 @@ type Claim struct {
     batchTimeout time.Duration
     batchStart time.Time
     batch map[common.Address]*big.Int
+    BatchId uuid.UUID
     mutex *sync.Mutex
 }
 
@@ -37,12 +39,18 @@ func InitClaim() error {
         return errors.New(fmt.Sprintf("Failed to instantiate a Claim contract: %v", err))
     }
 
+    u, err := uuid.NewV4()
+    if err != nil {
+        return err
+    }
+
     claim = &Claim{
         Contract: c,
         Claim:     s,
         batchLimit: viper.GetInt("geth.claim.batch_limit"),
         batchTimeout: time.Duration(viper.GetInt("geth.claim.batch_timeout")) * time.Minute,
         batchStart: time.Now().Add(24 * 365 * time.Hour),
+        BatchId: u,
         mutex: &sync.Mutex{},
     }
 
@@ -54,11 +62,7 @@ func GetClaim() *Claim {
 }
 
 func (c *Claim) Deploy(params *models.ClaimDeployParams) (*common.Address, *types.Transaction, error) {
-    var tokenAddr common.Address
-    tokenAddr, err := GetPrivatePlacement().TokenAddr()
-    if err != nil {
-        return nil, nil, err
-    }
+    tokenAddr := GetToken().Address
 
     address, tx, _, err := contract.DeployHoQuClaim(
         c.Wallet.Account,
@@ -116,13 +120,17 @@ func (c *Claim) ClaimAddress(addr string, amount string) (common.Hash, error) {
         c.batchStart = time.Now()
     }
 
-    c.addToBatch(addr, amount)
+    err := c.addToBatch(addr, amount)
+    if err != nil {
+        return common.Hash{}, err
+    }
 
     l1 := len(c.batch)
     if l1 >= c.batchLimit || c.batchStart.Add(c.batchTimeout).Before(time.Now()) {
         defer func(){
             c.batch = nil
             c.batchStart = time.Now().Add(24 * 365 * time.Hour)
+            c.BatchId, _ = uuid.NewV4()
         }()
 
         return c.ClaimAccumulated(c.batch)
@@ -138,8 +146,9 @@ func (c *Claim) addToBatch(addr string, amount string) error {
     }
 
     if ex, ok := c.batch[common.HexToAddress(addr)]; ok {
-        c.batch[common.HexToAddress(addr)] = big.NewInt(0).Add(ex, tokenAmount)
-        logrus.Info("Append ", addr, " to batch")
+        //c.batch[common.HexToAddress(addr)] = big.NewInt(0).Add(ex, tokenAmount)
+        //logrus.Info("Append ", addr, " to batch")
+        return fmt.Errorf("%s already claimed with amount %s", addr, ex.String())
     } else {
         c.batch[common.HexToAddress(addr)] = tokenAmount
         logrus.Info("Add ", addr, " to batch")

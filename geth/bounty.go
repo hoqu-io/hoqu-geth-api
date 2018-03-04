@@ -44,11 +44,7 @@ func GetBounty() *Bounty {
 }
 
 func (s *Bounty) Deploy(params *models.BountyDeployParams) (*common.Address, *types.Transaction, error) {
-    var tokenAddr common.Address
-    tokenAddr, err := GetPrivatePlacement().TokenAddr()
-    if err != nil {
-        return nil, nil, err
-    }
+    tokenAddr := GetToken().Address
 
     address, tx, _, err := contract.DeployHoQuBounty(
         s.Wallet.Account,

@@ -47,6 +47,7 @@ func postClaimBatchAction(c *gin.Context) {
         return
     }
 
+    id := geth.GetClaim().BatchId
     tx, err := geth.GetClaim().ClaimAddress(request.Address, request.Amount)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
@@ -54,9 +55,12 @@ func postClaimBatchAction(c *gin.Context) {
     }
 
     if tx.String() == (common.Hash{}).String() {
-        rest.NewResponder(c).Success("accepted")
+        rest.NewResponder(c).Success(gin.H{
+            "id": id.String(),
+        })
     } else {
         rest.NewResponder(c).Success(gin.H{
+            "id": id.String(),
             "tx": tx.String(),
         })
     }

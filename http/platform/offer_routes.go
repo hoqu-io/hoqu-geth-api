@@ -4,8 +4,6 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "strconv"
-    "fmt"
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
 )
@@ -19,6 +17,18 @@ func InitOfferRoutes(routerGroup *gin.RouterGroup) {
     }
 }
 
+// swagger:route POST /platform/offer/add offers addOffer
+//
+// Add Offer.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: AddSuccessResponse
+//   400: RestErrorResponse
+//
 func postAddOfferAction(c *gin.Context) {
     request := &models.AddOfferRequest{}
     err := c.BindJSON(request)
@@ -27,7 +37,7 @@ func postAddOfferAction(c *gin.Context) {
         return
     }
 
-    tx, err := geth.GetHoquPlatform().AddOffer(request)
+    tx, id, err := geth.GetHoquPlatform().AddOffer(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -35,9 +45,22 @@ func postAddOfferAction(c *gin.Context) {
 
     rest.NewResponder(c).Success(gin.H{
         "tx": tx.String(),
+        "id": id,
     })
 }
 
+// swagger:route POST /platform/offer/status offers setOfferStatus
+//
+// Set Offer Status.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: TxSuccessResponse
+//   400: RestErrorResponse
+//
 func postSetOfferStatusAction(c *gin.Context) {
     request := &models.SetStatusRequest{}
     err := c.BindJSON(request)
@@ -57,14 +80,20 @@ func postSetOfferStatusAction(c *gin.Context) {
     })
 }
 
+// swagger:route GET /platform/offer/:id offers getOffer
+//
+// Get Offer by ID.
+//
+// Produces:
+// - application/json
+// Responses:
+//   200: OfferDataResponse
+//   400: RestErrorResponse
+//
 func getOfferAction(c *gin.Context) {
-    id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-    if err != nil {
-        rest.NewResponder(c).Error(fmt.Errorf("wrong Offer id provided: %v", err.Error()))
-        return
-    }
+    id := c.Param("id")
 
-    offer, err := geth.GetHoquPlatform().GetOffer(uint32(id))
+    offer, err := geth.GetHoquPlatform().GetOffer(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

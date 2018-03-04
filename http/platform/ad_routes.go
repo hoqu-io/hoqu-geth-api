@@ -8,22 +8,22 @@ import (
     "hoqu-geth-api/sdk/http/middleware"
 )
 
-func InitTrackerRoutes(routerGroup *gin.RouterGroup) {
-    r := routerGroup.Group("/tracker")
+func InitAdRoutes(routerGroup *gin.RouterGroup) {
+    r := routerGroup.Group("/ad")
     {
-        r.POST("/register", middleware.SignRequired(), postRegisterTrackerAction)
-        r.POST("/status", middleware.SignRequired(), postSetTrackerStatusAction)
-        r.GET("/:id", getTrackerAction)
+        r.POST("/add", middleware.SignRequired(), postAddAdAction)
+        r.POST("/status", middleware.SignRequired(), postSetAdStatusAction)
+        r.GET("/:id", getAdAction)
     }
 }
 
-// swagger:route POST /platform/tracker/register trackers registerTracker
+// swagger:route POST /platform/ad/add ads addAd
 //
-// Register Tracker.
+// Add Ad.
 //
-// The Tracker is an application which receives visitor's requests to show the appropriate widget.
-// All widgets can be created in terms of appropriate Ad (affiliate promotion campaign).
-// If visitor interacts with a widget the Tracker creates the Lead and push it to Blockchain.
+// The Ad is a campaign of the affiliate to promote particular offer.
+// The Ad is created by the affiliate. All widgets placed on affiliate website should be linked to particular Ad.
+// The affiliate can specify money receiver address (beneficiary) per each Ad.
 //
 // Consumes:
 // - application/json
@@ -33,15 +33,15 @@ func InitTrackerRoutes(routerGroup *gin.RouterGroup) {
 //   200: AddSuccessResponse
 //   400: RestErrorResponse
 //
-func postRegisterTrackerAction(c *gin.Context) {
-    request := &models.RegisterTrackerRequest{}
+func postAddAdAction(c *gin.Context) {
+    request := &models.AddAdRequest{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    tx, id, err := geth.GetHoquPlatform().RegisterTracker(request)
+    tx, id, err := geth.GetHoquPlatform().AddAd(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -53,9 +53,9 @@ func postRegisterTrackerAction(c *gin.Context) {
     })
 }
 
-// swagger:route POST /platform/tracker/status trackers setTrackerStatus
+// swagger:route POST /platform/ad/status ads setAdStatus
 //
-// Set Tracker Status.
+// Set Ad Status.
 //
 // Consumes:
 // - application/json
@@ -65,7 +65,7 @@ func postRegisterTrackerAction(c *gin.Context) {
 //   200: TxSuccessResponse
 //   400: RestErrorResponse
 //
-func postSetTrackerStatusAction(c *gin.Context) {
+func postSetAdStatusAction(c *gin.Context) {
     request := &models.SetStatusRequest{}
     err := c.BindJSON(request)
     if err != nil {
@@ -73,7 +73,7 @@ func postSetTrackerStatusAction(c *gin.Context) {
         return
     }
 
-    tx, err := geth.GetHoquPlatform().SetTrackerStatus(request)
+    tx, err := geth.GetHoquPlatform().SetAdStatus(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -84,26 +84,26 @@ func postSetTrackerStatusAction(c *gin.Context) {
     })
 }
 
-// swagger:route GET /platform/tracker/:id trackers getTracker
+// swagger:route GET /platform/ad/:id ads getAd
 //
-// Get Tracker by ID.
+// Get Ad by ID.
 //
 // Produces:
 // - application/json
 // Responses:
-//   200: TrackerDataResponse
+//   200: AdDataResponse
 //   400: RestErrorResponse
 //
-func getTrackerAction(c *gin.Context) {
+func getAdAction(c *gin.Context) {
     id := c.Param("id")
 
-    tracker, err := geth.GetHoquPlatform().GetTracker(id)
+    ad, err := geth.GetHoquPlatform().GetAd(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
     rest.NewResponder(c).Success(gin.H{
-        "Tracker": tracker,
+        "Ad": ad,
     })
 }

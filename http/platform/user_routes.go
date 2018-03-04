@@ -4,8 +4,6 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "strconv"
-    "fmt"
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
 )
@@ -21,6 +19,18 @@ func InitUserRoutes(routerGroup *gin.RouterGroup) {
     }
 }
 
+// swagger:route POST /platform/user/register users registerUser
+//
+// Register User.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: AddSuccessResponse
+//   400: RestErrorResponse
+//
 func postRegisterUserAction(c *gin.Context) {
     request := &models.RegisterUserRequest{}
     err := c.BindJSON(request)
@@ -29,7 +39,7 @@ func postRegisterUserAction(c *gin.Context) {
         return
     }
 
-    tx, err := geth.GetHoquPlatform().RegisterUser(request)
+    tx, id, err := geth.GetHoquPlatform().RegisterUser(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -37,9 +47,25 @@ func postRegisterUserAction(c *gin.Context) {
 
     rest.NewResponder(c).Success(gin.H{
         "tx": tx.String(),
+        "id": id,
     })
 }
 
+// swagger:route POST /platform/user/kyc users addUserKyc
+//
+// Add User KYC report.
+//
+// Each User has KYC level which reflects his trust level.
+// User KYC level can be changed only by KYC reports.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: TxSuccessResponse
+//   400: RestErrorResponse
+//
 func postAddUserKycReportAction(c *gin.Context) {
     request := &models.AddUserKycReportRequest{}
     err := c.BindJSON(request)
@@ -59,6 +85,20 @@ func postAddUserKycReportAction(c *gin.Context) {
     })
 }
 
+// swagger:route POST /platform/user/address users addUserAddress
+//
+// Add User Ethereum Address.
+//
+// Each User can have several Ethereum addresses.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: TxSuccessResponse
+//   400: RestErrorResponse
+//
 func postAddUserAddressAction(c *gin.Context) {
     request := &models.AddUserAddressRequest{}
     err := c.BindJSON(request)
@@ -78,6 +118,18 @@ func postAddUserAddressAction(c *gin.Context) {
     })
 }
 
+// swagger:route POST /platform/user/status users setUserStatus
+//
+// Set User Status.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: TxSuccessResponse
+//   400: RestErrorResponse
+//
 func postSetUserStatusAction(c *gin.Context) {
     request := &models.SetStatusRequest{}
     err := c.BindJSON(request)
@@ -97,14 +149,20 @@ func postSetUserStatusAction(c *gin.Context) {
     })
 }
 
+// swagger:route GET /platform/user/:id users getUser
+//
+// Get User by ID.
+//
+// Produces:
+// - application/json
+// Responses:
+//   200: UserDataResponse
+//   400: RestErrorResponse
+//
 func getUserAction(c *gin.Context) {
-    id, err := strconv.ParseUint(c.Param("id"), 10, 32)
-    if err != nil {
-        rest.NewResponder(c).Error(fmt.Errorf("wrong user id provided: %v", err.Error()))
-        return
-    }
+    id := c.Param("id")
 
-    user, err := geth.GetHoquPlatform().GetUser(uint32(id))
+    user, err := geth.GetHoquPlatform().GetUser(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

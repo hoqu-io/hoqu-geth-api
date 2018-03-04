@@ -18,6 +18,7 @@ func initHoquPlatformRoutes(router *gin.Engine) {
         platform.InitCompanyRoutes(r)
         platform.InitTrackerRoutes(r)
         platform.InitOfferRoutes(r)
+        platform.InitAdRoutes(r)
         platform.InitLeadRoutes(r)
     }
 }
@@ -35,15 +36,27 @@ func postDeployHoquPlatformAction(c *gin.Context) {
     })
 }
 
+// swagger:route POST /platform/events platform events
+//
+// Get HOQU platform events.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: ContractEventResponse
+//   400: RestErrorResponse
+//
 func postPlatformEventsAction(c *gin.Context) {
-    request := &models.Addresses{}
+    request := &models.Events{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    events, err := geth.GetHoquPlatform().Events(request.Addresses)
+    events, err := geth.GetHoquPlatform().Events(request.Addresses, request.Latest)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

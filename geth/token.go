@@ -8,6 +8,7 @@ import (
     "fmt"
     "math/big"
     "hoqu-geth-api/sdk/geth"
+    "github.com/ethereum/go-ethereum/core/types"
 )
 
 var token *Token
@@ -32,6 +33,23 @@ func InitToken() error {
     }
 
     return nil
+}
+
+func (t *Token) Deploy(totSupply string) (*common.Address, *types.Transaction, error) {
+    totSupplyEth, ok := big.NewInt(0).SetString(totSupply, 0)
+    if !ok {
+        return nil, nil, fmt.Errorf("wrong number provided: %s", totSupply)
+    }
+
+    address, tx, _, err := contract.DeployHoQuToken(
+        t.Wallet.Account,
+        t.Wallet.Connection,
+        totSupplyEth,
+    )
+    if err != nil {
+        return nil, nil, fmt.Errorf("failed to deploy HoQuToken contract: %v", err)
+    }
+    return &address, tx, nil
 }
 
 func GetToken() *Token {

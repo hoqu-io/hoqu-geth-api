@@ -3,7 +3,6 @@ package geth
 import (
     "github.com/spf13/viper"
     "hoqu-geth-api/sdk/geth"
-    "fmt"
 )
 
 func InitGeth() error {
@@ -24,13 +23,13 @@ func InitGeth() error {
         return err
     }
 
-    if tokenAddr, _ := GetPrivatePlacement().TokenAddr(); tokenAddr != GetToken().Address {
-        return fmt.Errorf(
-            "Private Placement token address %v doesn't match with token address %v from config",
-            tokenAddr,
-            GetToken().Address,
-        )
-    }
+    //if tokenAddr, _ := GetPrivatePlacement().TokenAddr(); tokenAddr != GetToken().Address {
+    //    return fmt.Errorf(
+    //        "Private Placement token address %v doesn't match with token address %v from config",
+    //        tokenAddr,
+    //        GetToken().Address,
+    //    )
+    //}
 
     if err := InitPresale(); err != nil {
         return err

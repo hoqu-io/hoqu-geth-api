@@ -44,11 +44,7 @@ func GetPresale() *Presale {
 }
 
 func (p *Presale) Deploy(params *models.PresaleDeployParams) (*common.Address, *types.Transaction, error) {
-    var tokenAddr common.Address
-    tokenAddr, err := GetPrivatePlacement().TokenAddr()
-    if err != nil {
-        return nil, nil, err
-    }
+    tokenAddr := GetToken().Address
 
     tokenRate, ok := big.NewInt(0).SetString(params.TokenRate, 0)
     if !ok {

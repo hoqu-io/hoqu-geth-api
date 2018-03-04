@@ -5,14 +5,36 @@ import (
     "hoqu-geth-api/geth"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/sdk/http/middleware"
 )
 
 func initTokenRoutes(router *gin.Engine) {
     hqx := router.Group("/hqx")
     {
+        hqx.POST("/deploy", middleware.SignRequired(), postDeployTokenAction)
         hqx.GET("/balance/:address", getHqxBalanceAction)
         hqx.POST("/balances", getHqxBalancesAction)
     }
+}
+
+func postDeployTokenAction(c *gin.Context) {
+    request := &models.TokenDeployParams{}
+    err := c.BindJSON(request)
+    if err != nil {
+        rest.NewResponder(c).ErrorValidation(err.Error())
+        return
+    }
+
+    addr, tx, err := geth.GetToken().Deploy(request.TotalSupply)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "address": addr.String(),
+        "tx":      tx.Hash().String(),
+    })
 }
 
 func getHqxBalanceAction(c *gin.Context) {

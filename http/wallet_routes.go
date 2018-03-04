@@ -5,6 +5,7 @@ import (
     "hoqu-geth-api/sdk/http/rest"
     sdkGeth "hoqu-geth-api/sdk/geth"
     "hoqu-geth-api/geth/models"
+    "github.com/ethereum/go-ethereum/common"
 )
 
 func initWalletRoutes(router *gin.Engine) {
@@ -12,6 +13,8 @@ func initWalletRoutes(router *gin.Engine) {
     {
         eth.GET("/balance/:address", getEthBalanceAction)
         eth.POST("/balances", getEthBalancesAction)
+        eth.GET("/block", getLatestBlockHeaderAction)
+        eth.GET("/block/:hash", getBlockHeaderByHashAction)
     }
 }
 
@@ -49,5 +52,36 @@ func getEthBalancesAction(c *gin.Context) {
 
     rest.NewResponder(c).Success(gin.H{
         "balances": bals,
+    })
+}
+
+func getBlockHeaderByHashAction(c *gin.Context) {
+    hash := c.Param("hash")
+    b, err := sdkGeth.GetWallet().GetBlockHeaderByHash(common.HexToHash(hash))
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "number": b.Number.String(),
+        "hash": b.Hash().String(),
+        "timestamp": b.Time.String(),
+        "raw": b,
+    })
+}
+
+func getLatestBlockHeaderAction(c *gin.Context) {
+    b, err := sdkGeth.GetWallet().GetBlockHeaderByNumber(nil)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "number": b.Number.String(),
+        "hash": b.Hash().String(),
+        "timestamp": b.Time.String(),
+        "raw": b,
     })
 }
