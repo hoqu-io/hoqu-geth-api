@@ -1,7 +1,7 @@
 package geth
 
 import (
-    "hoqu-geth-api/contract"
+    contract "hoqu-geth-api/contract/claim"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
@@ -69,6 +69,7 @@ func (c *Claim) Deploy(params *models.ClaimDeployParams) (*common.Address, *type
         c.Wallet.Connection,
         tokenAddr,
         common.HexToAddress(params.BankAddress),
+        params.ClaimMultimple,
     )
     if err != nil {
         return nil, nil, fmt.Errorf("failed to deploy contract: %v", err)
@@ -76,15 +77,10 @@ func (c *Claim) Deploy(params *models.ClaimDeployParams) (*common.Address, *type
     return &address, tx, nil
 }
 
-func (c *Claim) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
-    hashAddrs := make([]common.Hash, len(addrs))
-    for _, addr := range addrs {
-        hashAddrs = append(hashAddrs, common.HexToHash(addr))
-    }
-
+func (c *Claim) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, error) {
     events, err := c.GetEventsByTopics(
-        [][]common.Hash{{}, hashAddrs},
-        big.NewInt(viper.GetInt64("geth.start_block.claim")),
+        request,
+        viper.GetInt64("geth.start_block.claim"),
     )
     if err != nil {
         return nil, err

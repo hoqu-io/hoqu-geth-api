@@ -7,6 +7,7 @@ import (
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
     "github.com/ethereum/go-ethereum/common"
+    models2 "hoqu-geth-api/sdk/models"
 )
 
 func initClaimRoutes(router *gin.Engine) {
@@ -86,14 +87,14 @@ func postClaimOneAction(c *gin.Context) {
 }
 
 func postClaimTransactionsAction(c *gin.Context) {
-    request := &models.Addresses{}
+    request := &models2.Events{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    events, err := geth.GetClaim().Events(request.Addresses)
+    events, err := geth.GetClaim().Events(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
