@@ -10,21 +10,20 @@ import (
     "hoqu-geth-api/geth/models"
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
-    "math/big"
 )
 
 var config *HoQuConfig
 
 type HoQuConfig struct {
     *geth.Contract
-    HoQuConfig *platform.HoQuPlatformConfig
+    HoQuConfig *platform.HoQuConfig
 }
 
 func initHoQuConfig() error {
     c := geth.NewContract(viper.GetString("geth.addr.conf"))
-    c.InitEvents(platform.HoQuPlatformConfigABI)
+    c.InitEvents(platform.HoQuConfigABI)
 
-    s, err := platform.NewHoQuPlatformConfig(c.Address, c.Wallet.Connection)
+    s, err := platform.NewHoQuConfig(c.Address, c.Wallet.Connection)
     if err != nil {
         return errors.New(fmt.Sprintf("Failed to instantiate a HoQu Platform Config contract: %v", err))
     }
@@ -42,10 +41,9 @@ func GetHoQuConfig() *HoQuConfig {
 }
 
 func (s *HoQuConfig) Deploy(params *models.ConfigDeployParams) (*common.Address, *types.Transaction, error) {
-    address, tx, _, err := platform.DeployHoQuPlatformConfig(
+    address, tx, _, err := platform.DeployHoQuConfig(
         s.Wallet.Account,
         s.Wallet.Connection,
-        s.Wallet.Account.From,
         common.HexToAddress(params.CommissionWallet),
     )
     if err != nil {
@@ -54,19 +52,10 @@ func (s *HoQuConfig) Deploy(params *models.ConfigDeployParams) (*common.Address,
     return &address, tx, nil
 }
 
-func (s *HoQuConfig) SystemOwner() (common.Address, error) {
-    return s.HoQuConfig.SystemOwner(nil)
-}
-
-func (s *HoQuConfig) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
-    hashAddrs := make([]common.Hash, len(addrs))
-    for _, addr := range addrs {
-        hashAddrs = append(hashAddrs, common.HexToHash(addr))
-    }
-
+func (s *HoQuConfig) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, error) {
     events, err := s.GetEventsByTopics(
-        [][]common.Hash{{}, hashAddrs},
-        big.NewInt(viper.GetInt64("geth.start_block.conf")),
+        request,
+        viper.GetInt64("geth.start_block.conf"),
     )
     if err != nil {
         return nil, err
@@ -74,10 +63,18 @@ func (s *HoQuConfig) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
 
     for key, event := range events {
         switch {
+        case event.Name == "SystemOwnerAdded":
+            events[key].Args = models.SystemOwnerAddedEventArgs{
+                NewOwner:      common.BytesToAddress(event.RawArgs[0]).String(),
+            }
         case event.Name == "SystemOwnerChanged":
             events[key].Args = models.SystemOwnerChangedEventArgs{
                 PreviousOwner: common.BytesToAddress(event.RawArgs[0]).String(),
                 NewOwner:      common.BytesToAddress(event.RawArgs[1]).String(),
+            }
+        case event.Name == "SystemOwnerDeleted":
+            events[key].Args = models.SystemOwnerDeletedEventArgs{
+                DeletedOwner: common.BytesToAddress(event.RawArgs[0]).String(),
             }
         case event.Name == "CommissionWalletChanged":
             events[key].Args = models.CommissionWalletChangedEventArgs{
@@ -97,8 +94,8 @@ func (s *HoQuConfig) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
     return events, nil
 }
 
-func (s *HoQuConfig) SetSystemOwner(addr string) (common.Hash, error) {
-    tx, err := s.HoQuConfig.SetSystemOwner(s.Wallet.Account, common.HexToAddress(addr))
+func (s *HoQuConfig) AddOwner(addr string) (common.Hash, error) {
+    tx, err := s.HoQuConfig.AddOwner(s.Wallet.Account, common.HexToAddress(addr))
     if err != nil {
         return common.Hash{}, err
     }

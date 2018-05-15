@@ -9,10 +9,10 @@ import (
 )
 
 func initHoQuConfigRoutes(router *gin.Engine) {
-    config := router.Group("/config")
+    config := router.Group("/config", middleware.SignRequired())
     {
-        config.POST("/deploy", middleware.SignRequired(), postDeployHoQuConfigAction)
-        config.GET("/owner", getHoQuConfigSystemOwnerAction)
+        config.POST("/deploy", postDeployHoQuConfigAction)
+        config.POST("/owners/add", postAddOwnersAction)
     }
 }
 
@@ -36,14 +36,25 @@ func postDeployHoQuConfigAction(c *gin.Context) {
     })
 }
 
-func getHoQuConfigSystemOwnerAction(c *gin.Context) {
-    addr, err := geth.GetHoQuConfig().SystemOwner()
+func postAddOwnersAction(c *gin.Context) {
+    request := &models.Addresses{}
+    err := c.BindJSON(request)
     if err != nil {
-        rest.NewResponder(c).Error(err.Error())
+        rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
+    txs := map[string]string{}
+    for _, addr := range request.Addresses {
+        tx, err := geth.GetHoQuConfig().AddOwner(addr)
+        if err != nil {
+            rest.NewResponder(c).Error(err.Error())
+            return
+        }
+        txs[addr] = tx.String()
+    }
+
     rest.NewResponder(c).Success(gin.H{
-        "address": addr.String(),
+        "txs": txs,
     })
 }
