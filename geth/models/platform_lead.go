@@ -30,6 +30,9 @@ type AddLeadIntermediaryParams struct {
 }
 
 type AddLeadIntermediaryRequest struct {
+    // the ID of an Ad Campaign
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    AdId string `json:"adId"`
     // Lead ID the intermediary is adding to
     // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
     Id string `json:"id"`
@@ -41,6 +44,38 @@ type AddLeadIntermediaryRequest struct {
     Percent float32 `json:"percent"`
 }
 
+// swagger:parameters setLeadStatus
+type SetLeadStatusParams struct {
+    // in: body
+    Body SetLeadStatusRequest `json:"body"`
+}
+
+type SetLeadStatusRequest struct {
+    // the ID of an Ad Campaign
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    AdId string `json:"adId"`
+    // id of the lead
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    Id     string `json:"id"`
+    // example: 3
+    Status Status `json:"status"`
+}
+
+// swagger:parameters transactLead getLead
+type TransactLeadParams struct {
+    // in: body
+    Body TransactLeadRequest `json:"body"`
+}
+
+type TransactLeadRequest struct {
+    // the ID of an Ad Campaign
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    AdId string `json:"adId"`
+    // id of entity
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    Id string `json:"id"`
+}
+
 type LeadAddedEventArgs struct {
     OwnerAddress string `json:"ownerAddress"`
     Id           string `json:"id"`
@@ -49,6 +84,9 @@ type LeadAddedEventArgs struct {
 
 // swagger:parameters getLead
 type GetLeadParams struct {
+    // the ID of an Ad Campaign
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    AdId string `json:"adId"`
     // an ID of the requested lead
     // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
     // in: query

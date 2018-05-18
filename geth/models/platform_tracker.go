@@ -7,9 +7,12 @@ type RegisterTrackerParams struct {
 }
 
 type RegisterTrackerRequest struct {
-    // Ethereum address of the owner
-    // example: 0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD
-    OwnerAddress string `json:"ownerAddress"`
+    // the ID of an User owned the entity
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    OwnerId string `json:"ownerId"`
+    // the ID of the Network the tracker is working for (can be empty)
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    NetworkId string `json:"networkId"`
     // the name of the Tracker
     Name         string `json:"name"`
     // the Tracker full data URL
@@ -31,7 +34,7 @@ type TrackerDataResponse struct {
     // in: body
     Body struct {
         Data struct {
-            Lead TrackerData `json:"Tracker"`
+            Tracker TrackerData `json:"Tracker"`
         } `json:"data"`
     }
 }
@@ -43,9 +46,12 @@ type TrackerData struct {
     // unix timestamp
     // example: 1518957879
     CreatedAt    string `json:"createdAt"`
-    // Ethereum address of the owner
-    // example: 0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD
-    OwnerAddress string `json:"ownerAddress"`
+    // the ID of an User owned the entity
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    OwnerId string `json:"ownerId"`
+    // the ID of the Network the tracker is working for (can be empty)
+    // example: a6fdb91a-149d-11e8-b642-0ed5f89f718b
+    NetworkId string `json:"networkId"`
     // the name of the Tracker
     Name         string `json:"name"`
     // the Tracker full data URL

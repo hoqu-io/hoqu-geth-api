@@ -5,7 +5,7 @@ package models
 // example: 3
 type Status uint8
 
-// swagger:parameters setLeadStatus setAdStatus setOfferStatus setUserStatus setTrackerStatus setCompanyStatus
+// swagger:parameters setAdStatus setOfferStatus setUserStatus setTrackerStatus setNetworkStatus setCompanyStatus
 type SetStatusParams struct {
     // in: body
     Body SetStatusRequest `json:"body"`
@@ -33,12 +33,6 @@ type IdWithNameEventArgs struct {
     OwnerAddress string `json:"ownerAddress"`
     Id           string `json:"id"`
     Name         string `json:"name"`
-}
-
-// swagger:parameters sellLead
-type IdRequestParams struct {
-    // in: body
-    Body IdRequest `json:"body"`
 }
 
 type IdRequest struct {
