@@ -43,13 +43,11 @@ func GetHoquPlatform() *HoquPlatform {
 }
 
 func (hp *HoquPlatform) Deploy() (*common.Address, *types.Transaction, error) {
-    tokenAddr := GetToken().Address
-
     address, tx, _, err := platform.DeployHoQuPlatform(
         hp.Wallet.Account,
         hp.Wallet.Connection,
         GetHoQuConfig().Address,
-        tokenAddr,
+        GetHoQuStorage().Address,
     )
     if err != nil {
         return nil, nil, fmt.Errorf("failed to deploy contract: %v", err)
@@ -75,26 +73,6 @@ func (hp *HoquPlatform) RegisterUser(params *models.RegisterUserRequest) (common
     }
 
     return tx.Hash(), id, nil
-}
-
-func (hp *HoquPlatform) AddUserKycReport(params *models.AddUserKycReportRequest) (common.Hash, error) {
-    id, err := uuid.FromString(params.Id)
-    if err != nil {
-        return common.Hash{}, err
-    }
-
-    tx, err := hp.HoquPlatform.AddUserKycReport(
-        hp.Wallet.Account,
-        id,
-        params.Meta,
-        params.KycLevel,
-        params.DataUrl,
-    )
-    if err != nil {
-        return common.Hash{}, err
-    }
-
-    return tx.Hash(), nil
 }
 
 func (hp *HoquPlatform) AddUserAddress(params *models.AddUserAddressRequest) (common.Hash, error) {
@@ -133,51 +111,58 @@ func (hp *HoquPlatform) SetUserStatus(params *models.SetStatusRequest) (common.H
     return tx.Hash(), nil
 }
 
-func (hp *HoquPlatform) GetUser(id string) (*models.UserData, error) {
-    uid, err := uuid.FromString(id)
+func (hp *HoquPlatform) AddIdentification(params *models.AddIdentificationRequest) (common.Hash, uuid.UUID, error) {
+    id, err := uuid.NewV2('I')
     if err != nil {
-        return nil, err
+        return common.Hash{}, id, err
     }
 
-    user, err := hp.HoquPlatform.Users(nil, uid)
+    uid, err := uuid.FromString(params.UserId)
     if err != nil {
-        return nil, err
+        return common.Hash{}, id, err
     }
 
-    addresses := make(map[uint8]string)
-    for num := uint8(0); num < user.NumOfAddresses; num++ {
-        addr, err := hp.HoquPlatform.GetUserAddress(nil, uid, num)
+    var cid uuid.UUID
+    if params.CompanyId != "" {
+        cid, err = uuid.FromString(params.CompanyId)
         if err != nil {
-            return nil, err
-        }
-        addresses[num] = addr.String()
-    }
-
-    reports := make(map[uint16]models.KycReport)
-    for num := uint16(0); num < user.NumOfKycReports; num++ {
-        createdAt, meta, kycLevel, dataUrl, err := hp.HoquPlatform.GetUserKycReport(nil, uid, num)
-        if err != nil {
-            return nil, err
-        }
-        reports[num] = models.KycReport{
-            CreatedAt: createdAt.String(),
-            Meta:      meta,
-            KycLevel:  kycLevel,
-            DataUrl:   dataUrl,
+            return common.Hash{}, id, err
         }
     }
 
-    userData := &models.UserData{
-        CreatedAt:  user.CreatedAt.String(),
-        Addresses:  addresses,
-        Role:       user.Role,
-        KycLevel:   user.KycLevel,
-        KycReports: reports,
-        PubKey:     user.PubKey,
-        Status:     models.Status(user.Status),
+    tx, err := hp.HoquPlatform.AddIdentification(
+        hp.Wallet.Account,
+        id,
+        uid,
+        params.IdType,
+        params.Name,
+        cid,
+    )
+    if err != nil {
+        return common.Hash{}, id, err
     }
 
-    return userData, nil
+    return tx.Hash(), id, nil
+}
+
+func (hp *HoquPlatform) AddKycReport(params *models.AddKycReportRequest) (common.Hash, error) {
+    id, err := uuid.FromString(params.Id)
+    if err != nil {
+        return common.Hash{}, err
+    }
+
+    tx, err := hp.HoquPlatform.AddKycReport(
+        hp.Wallet.Account,
+        id,
+        params.Meta,
+        params.KycLevel,
+        params.DataUrl,
+    )
+    if err != nil {
+        return common.Hash{}, err
+    }
+
+    return tx.Hash(), nil
 }
 
 func (hp *HoquPlatform) RegisterCompany(params *models.RegisterCompanyRequest) (common.Hash, uuid.UUID, error) {
@@ -195,7 +180,6 @@ func (hp *HoquPlatform) RegisterCompany(params *models.RegisterCompanyRequest) (
         hp.Wallet.Account,
         id,
         oid,
-        common.HexToAddress(params.OwnerAddress),
         params.Name,
         params.DataUrl,
     )
@@ -224,32 +208,47 @@ func (hp *HoquPlatform) SetCompanyStatus(params *models.SetStatusRequest) (commo
     return tx.Hash(), nil
 }
 
-func (hp *HoquPlatform) GetCompany(id string) (*models.CompanyData, error) {
-    cid, err := uuid.FromString(id)
+func (hp *HoquPlatform) RegisterNetwork(params *models.RegisterNetworkRequest) (common.Hash, uuid.UUID, error) {
+    id, err := uuid.NewV2('N')
     if err != nil {
-        return nil, err
+        return common.Hash{}, id, err
     }
 
-    company, err := hp.HoquPlatform.Companies(nil, cid)
+    oid, err := uuid.FromString(params.OwnerId)
     if err != nil {
-        return nil, err
+        return common.Hash{}, id, err
     }
 
-    oid, err := uuid.FromBytes(company.OwnerId[:])
+    tx, err := hp.HoquPlatform.RegisterNetwork(
+        hp.Wallet.Account,
+        id,
+        oid,
+        params.Name,
+        params.DataUrl,
+    )
     if err != nil {
-        return nil, err
+        return common.Hash{}, id, err
     }
 
-    companyData := &models.CompanyData{
-        CreatedAt:    company.CreatedAt.String(),
-        OwnerId:      oid.String(),
-        OwnerAddress: company.OwnerAddress.String(),
-        Name:         company.Name,
-        DataUrl:      company.DataUrl,
-        Status:       models.Status(company.Status),
+    return tx.Hash(), id, nil
+}
+
+func (hp *HoquPlatform) SetNetworkStatus(params *models.SetStatusRequest) (common.Hash, error) {
+    id, err := uuid.FromString(params.Id)
+    if err != nil {
+        return common.Hash{}, err
     }
 
-    return companyData, nil
+    tx, err := hp.HoquPlatform.SetNetworkStatus(
+        hp.Wallet.Account,
+        id,
+        uint8(params.Status),
+    )
+    if err != nil {
+        return common.Hash{}, err
+    }
+
+    return tx.Hash(), nil
 }
 
 func (hp *HoquPlatform) RegisterTracker(params *models.RegisterTrackerRequest) (common.Hash, uuid.UUID, error) {
@@ -258,10 +257,21 @@ func (hp *HoquPlatform) RegisterTracker(params *models.RegisterTrackerRequest) (
         return common.Hash{}, id, err
     }
 
+    oid, err := uuid.FromString(params.OwnerId)
+    if err != nil {
+        return common.Hash{}, id, err
+    }
+
+    nid, err := uuid.FromString(params.NetworkId)
+    if err != nil {
+        return common.Hash{}, id, err
+    }
+
     tx, err := hp.HoquPlatform.RegisterTracker(
         hp.Wallet.Account,
         id,
-        common.HexToAddress(params.OwnerAddress),
+        oid,
+        nid,
         params.Name,
         params.DataUrl,
     )
@@ -290,28 +300,6 @@ func (hp *HoquPlatform) SetTrackerStatus(params *models.SetStatusRequest) (commo
     return tx.Hash(), nil
 }
 
-func (hp *HoquPlatform) GetTracker(id string) (*models.TrackerData, error) {
-    tid, err := uuid.FromString(id)
-    if err != nil {
-        return nil, err
-    }
-
-    tracker, err := hp.HoquPlatform.Trackers(nil, tid)
-    if err != nil {
-        return nil, err
-    }
-
-    trackerData := &models.TrackerData{
-        CreatedAt:    tracker.CreatedAt.String(),
-        OwnerAddress: tracker.OwnerAddress.String(),
-        Name:         tracker.Name,
-        DataUrl:      tracker.DataUrl,
-        Status:       models.Status(tracker.Status),
-    }
-
-    return trackerData, nil
-}
-
 func (hp *HoquPlatform) AddOffer(params *models.AddOfferRequest) (common.Hash, uuid.UUID, error) {
     id, err := uuid.NewV2('O')
     if err != nil {
@@ -323,7 +311,17 @@ func (hp *HoquPlatform) AddOffer(params *models.AddOfferRequest) (common.Hash, u
         return common.Hash{}, id, fmt.Errorf("wrong offer cost provided: %s", params.Cost)
     }
 
-    cid, err := uuid.FromString(params.CompanyId)
+    oid, err := uuid.FromString(params.OwnerId)
+    if err != nil {
+        return common.Hash{}, id, err
+    }
+
+    nid, err := uuid.FromString(params.NetworkId)
+    if err != nil {
+        return common.Hash{}, id, err
+    }
+
+    mid, err := uuid.FromString(params.MerchantId)
     if err != nil {
         return common.Hash{}, id, err
     }
@@ -331,7 +329,9 @@ func (hp *HoquPlatform) AddOffer(params *models.AddOfferRequest) (common.Hash, u
     tx, err := hp.HoquPlatform.AddOffer(
         hp.Wallet.Account,
         id,
-        cid,
+        oid,
+        nid,
+        mid,
         common.HexToAddress(params.PayerAddress),
         params.Name,
         params.DataUrl,
@@ -362,63 +362,34 @@ func (hp *HoquPlatform) SetOfferStatus(params *models.SetStatusRequest) (common.
     return tx.Hash(), nil
 }
 
-func (hp *HoquPlatform) GetOffer(id string) (*models.OfferData, error) {
-    oid, err := uuid.FromString(id)
+func (hp *HoquPlatform) AddAd(params *models.AddAdToStorageRequest) (common.Hash, error) {
+    aid, err := uuid.FromString(params.AdId)
     if err != nil {
-        return nil, err
-    }
-
-    offer, err := hp.HoquPlatform.Offers(nil, oid)
-    if err != nil {
-        return nil, err
-    }
-
-    cid, err := uuid.FromBytes(offer.CompanyId[:])
-    if err != nil {
-        return nil, err
-    }
-
-    offerData := &models.OfferData{
-        CreatedAt:    offer.CreatedAt.String(),
-        CompanyId:    cid.String(),
-        PayerAddress: offer.PayerAddress.String(),
-        Name:         offer.Name,
-        DataUrl:      offer.DataUrl,
-        Cost:         offer.Cost.String(),
-        Status:       models.Status(offer.Status),
-    }
-
-    return offerData, nil
-}
-
-func (hp *HoquPlatform) AddAd(params *models.AddAdRequest) (common.Hash, uuid.UUID, error) {
-    id, err := uuid.NewV2('A')
-    if err != nil {
-        return common.Hash{}, id, err
+        return common.Hash{}, err
     }
 
     oid, err := uuid.FromString(params.OwnerId)
     if err != nil {
-        return common.Hash{}, id, err
+        return common.Hash{}, err
     }
 
     offid, err := uuid.FromString(params.OfferId)
     if err != nil {
-        return common.Hash{}, id, err
+        return common.Hash{}, err
     }
 
-    tx, err := hp.HoquPlatform.AddAd(
+    tx, err := hp.HoquPlatform.AddAdCampaign(
         hp.Wallet.Account,
-        id,
+        aid,
         oid,
         offid,
-        common.HexToAddress(params.BeneficiaryAddress),
+        common.HexToAddress(params.ContractAddress),
     )
     if err != nil {
-        return common.Hash{}, id, err
+        return common.Hash{}, err
     }
 
-    return tx.Hash(), id, nil
+    return tx.Hash(), nil
 }
 
 func (hp *HoquPlatform) SetAdStatus(params *models.SetStatusRequest) (common.Hash, error) {
@@ -427,7 +398,7 @@ func (hp *HoquPlatform) SetAdStatus(params *models.SetStatusRequest) (common.Has
         return common.Hash{}, err
     }
 
-    tx, err := hp.HoquPlatform.SetAdStatus(
+    tx, err := hp.HoquPlatform.SetAdCampaignStatus(
         hp.Wallet.Account,
         id,
         uint8(params.Status),
@@ -437,37 +408,6 @@ func (hp *HoquPlatform) SetAdStatus(params *models.SetStatusRequest) (common.Has
     }
 
     return tx.Hash(), nil
-}
-
-func (hp *HoquPlatform) GetAd(id string) (*models.AdData, error) {
-    aid, err := uuid.FromString(id)
-    if err != nil {
-        return nil, err
-    }
-
-    ad, err := hp.HoquPlatform.Ads(nil, aid)
-    if err != nil {
-        return nil, err
-    }
-
-    oid, err := uuid.FromBytes(ad.OwnerId[:])
-    if err != nil {
-        return nil, err
-    }
-
-    offid, err := uuid.FromBytes(ad.OfferId[:])
-    if err != nil {
-        return nil, err
-    }
-
-    adData := &models.AdData{
-        CreatedAt:          ad.CreatedAt.String(),
-        OwnerId:            oid.String(),
-        OfferId:            offid.String(),
-        BeneficiaryAddress: ad.BeneficiaryAddress.String(),
-    }
-
-    return adData, nil
 }
 
 func (hp *HoquPlatform) AddLead(params *models.AddLeadRequest) (common.Hash, uuid.UUID, error) {
@@ -513,9 +453,15 @@ func (hp *HoquPlatform) AddLeadIntermediary(params *models.AddLeadIntermediaryRe
         return common.Hash{}, err
     }
 
+    aid, err := uuid.FromString(params.AdId)
+    if err != nil {
+        return common.Hash{}, err
+    }
+
     tx, err := hp.HoquPlatform.AddLeadIntermediary(
         hp.Wallet.Account,
         id,
+        aid,
         common.HexToAddress(params.Address),
         uint32(params.Percent*1e6),
     )
@@ -526,8 +472,13 @@ func (hp *HoquPlatform) AddLeadIntermediary(params *models.AddLeadIntermediaryRe
     return tx.Hash(), nil
 }
 
-func (hp *HoquPlatform) SetLeadStatus(params *models.SetStatusRequest) (common.Hash, error) {
+func (hp *HoquPlatform) SetLeadStatus(params *models.SetLeadStatusRequest) (common.Hash, error) {
     id, err := uuid.FromString(params.Id)
+    if err != nil {
+        return common.Hash{}, err
+    }
+
+    aid, err := uuid.FromString(params.AdId)
     if err != nil {
         return common.Hash{}, err
     }
@@ -535,6 +486,7 @@ func (hp *HoquPlatform) SetLeadStatus(params *models.SetStatusRequest) (common.H
     tx, err := hp.HoquPlatform.SetLeadStatus(
         hp.Wallet.Account,
         id,
+        aid,
         uint8(params.Status),
     )
     if err != nil {
@@ -544,15 +496,21 @@ func (hp *HoquPlatform) SetLeadStatus(params *models.SetStatusRequest) (common.H
     return tx.Hash(), nil
 }
 
-func (hp *HoquPlatform) SellLead(id string) (common.Hash, error) {
+func (hp *HoquPlatform) TransactLead(id string, adId string) (common.Hash, error) {
     lid, err := uuid.FromString(id)
     if err != nil {
         return common.Hash{}, err
     }
 
-    tx, err := hp.HoquPlatform.SellLead(
+    aid, err := uuid.FromString(adId)
+    if err != nil {
+        return common.Hash{}, err
+    }
+
+    tx, err := hp.HoquPlatform.TransactLead(
         hp.Wallet.Account,
         lid,
+        aid,
     )
     if err != nil {
         return common.Hash{}, err
@@ -561,72 +519,10 @@ func (hp *HoquPlatform) SellLead(id string) (common.Hash, error) {
     return tx.Hash(), nil
 }
 
-func (hp *HoquPlatform) GetLead(id string) (*models.LeadData, error) {
-    lid, err := uuid.FromString(id)
-    if err != nil {
-        return nil, err
-    }
-
-    lead, err := hp.HoquPlatform.Leads(nil, lid)
-    if err != nil {
-        return nil, err
-    }
-
-    intermediaries := make(map[string]float32)
-    for num := uint8(0); num < lead.NumOfIntermediaries; num++ {
-        addr, err := hp.HoquPlatform.GetLeadIntermediaryAddress(nil, lid, num)
-        if err != nil {
-            return nil, err
-        }
-        percent, err := hp.HoquPlatform.GetLeadIntermediaryPercent(nil, lid, num)
-        if err != nil {
-            return nil, err
-        }
-        intermediaries[addr.String()] = float32(percent) / 1e6
-    }
-
-    aid, err := uuid.FromBytes(lead.AdId[:])
-    if err != nil {
-        return nil, err
-    }
-
-    tid, err := uuid.FromBytes(lead.TrackerId[:])
-    if err != nil {
-        return nil, err
-    }
-
-    leadData := &models.LeadData{
-        CreatedAt:      lead.CreatedAt.String(),
-        AdId:           aid.String(),
-        TrackerId:      tid.String(),
-        Intermediaries: intermediaries,
-        Meta:           lead.Meta,
-        DataUrl:        lead.DataUrl,
-        Price:          lead.Price.String(),
-        Status:         models.Status(lead.Status),
-    }
-
-    return leadData, nil
-}
-
-func (hp *HoquPlatform) Events(addrs []string, latest int64) ([]sdkModels.ContractEvent, error) {
-    hashAddrs := make([]common.Hash, len(addrs))
-    for _, addr := range addrs {
-        hashAddrs = append(hashAddrs, common.HexToHash(addr))
-    }
-
-    from := big.NewInt(viper.GetInt64("geth.start_block.platform"))
-    if latest != 0 {
-        b, err := hp.Wallet.GetBlockHeaderByNumber(nil)
-        if err != nil {
-            return nil, err
-        }
-        from = big.NewInt(0).Sub(b.Number, big.NewInt(latest))
-    }
-
+func (hp *HoquPlatform) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, error) {
     events, err := hp.GetEventsByTopics(
-        [][]common.Hash{{}, hashAddrs},
-        from,
+        request,
+        viper.GetInt64("geth.start_block.platform"),
     )
     if err != nil {
         return nil, err
@@ -657,15 +553,16 @@ func (hp *HoquPlatform) Events(addrs []string, latest int64) ([]sdkModels.Contra
             events[key].Args = models.OnlyAddressEventArgs{
                 OwnerAddress: common.BytesToAddress(event.RawArgs[0]).String(),
             }
-        case event.Name == "UserKycReportAdded":
+        case event.Name == "KycReportAdded":
 
-            events[key].Args = models.UserKycReportAddedEventArgs{
+            events[key].Args = models.KycReportAddedEventArgs{
                 OwnerAddress: common.BytesToAddress(event.RawArgs[0]).String(),
                 KycLevel:     uint8(common.BytesToHash(event.RawArgs[1]).Big().Uint64()),
             }
         case event.Name == "UserStatusChanged" || event.Name == "CompanyStatusChanged" ||
             event.Name == "TrackerStatusChanged" || event.Name == "OfferStatusChanged" ||
-            event.Name == "LeadStatusChanged" || event.Name == "AdStatusChanged":
+            event.Name == "LeadStatusChanged" || event.Name == "AdCampaignStatusChanged" ||
+            event.Name == "NetworkStatusChanged":
 
             uuId, err := uuid.FromBytes(event.RawArgs[1][:16])
             if err != nil {
@@ -678,7 +575,8 @@ func (hp *HoquPlatform) Events(addrs []string, latest int64) ([]sdkModels.Contra
                 Status:       uint8(common.BytesToHash(event.RawArgs[2]).Big().Uint64()),
             }
         case event.Name == "CompanyRegistered" || event.Name == "TrackerRegistered" ||
-            event.Name == "OfferAdded":
+            event.Name == "OfferAdded" || event.Name == "IdentificationAdded" ||
+            event.Name == "NetworkRegistered":
 
             uuId, err := uuid.FromBytes(event.RawArgs[1][:16])
             if err != nil {
@@ -690,7 +588,7 @@ func (hp *HoquPlatform) Events(addrs []string, latest int64) ([]sdkModels.Contra
                 Id:           uuId.String(),
                 Name:         string(event.RawArgs[2]),
             }
-        case event.Name == "AdAdded":
+        case event.Name == "AdCampaignAdded":
 
             uuId, err := uuid.FromBytes(event.RawArgs[1][:16])
             if err != nil {
@@ -700,6 +598,7 @@ func (hp *HoquPlatform) Events(addrs []string, latest int64) ([]sdkModels.Contra
             events[key].Args = models.AdAddedEventArgs{
                 OwnerAddress: common.BytesToAddress(event.RawArgs[0]).String(),
                 Id:           uuId.String(),
+                ContractAddress: common.BytesToAddress(event.RawArgs[2]).String(),
             }
         case event.Name == "LeadAdded":
 
