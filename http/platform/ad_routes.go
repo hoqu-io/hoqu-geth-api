@@ -6,6 +6,7 @@ import (
     "hoqu-geth-api/geth"
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
+    "github.com/satori/go.uuid"
 )
 
 func InitAdRoutes(routerGroup *gin.RouterGroup) {
@@ -41,15 +42,54 @@ func postAddAdAction(c *gin.Context) {
         return
     }
 
-    tx, id, err := geth.GetHoquPlatform().AddAd(request)
+    offer, err := geth.GetHoQuStorage().GetOffer(request.OfferId)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    id, err := uuid.NewV2('A')
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    deployParams := &models.DeployAdContractRequest{
+        OwnerId: request.OwnerId,
+        OfferId: request.OfferId,
+        AdId: id.String(),
+        BeneficiaryAddress: request.BeneficiaryAddress,
+        PayerAddress: offer.PayerAddress,
+    }
+    contractAddress, tx, err := geth.DeployAdCampaign(deployParams)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    adToStorageReq := &models.AddAdToStorageRequest{
+        OwnerId: request.OwnerId,
+        OfferId: request.OfferId,
+        AdId: id.String(),
+        ContractAddress: contractAddress.String(),
+    }
+
+    _, err = geth.GetHoquPlatform().AddAd(adToStorageReq)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    _, err = geth.GetHoQuConfig().AddOwner(adToStorageReq.ContractAddress)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
     rest.NewResponder(c).Success(gin.H{
-        "tx": tx.String(),
+        "tx": tx.Hash().String(),
         "id": id,
+        "contractAddress": contractAddress.String(),
     })
 }
 
@@ -97,13 +137,60 @@ func postSetAdStatusAction(c *gin.Context) {
 func getAdAction(c *gin.Context) {
     id := c.Param("id")
 
-    ad, err := geth.GetHoquPlatform().GetAd(id)
+    adstorage, err := geth.GetHoQuStorage().GetAd(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
+    adcontract, err := geth.GetAdCampaign(adstorage.ContractAddress)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    adId, err := adcontract.AdId()
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    offId, err := adcontract.OfferId()
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    affId, err := adcontract.AffiliateId()
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    baddr, err := adcontract.BeneficiaryAddress()
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    paddr, err := adcontract.PayerAddress()
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    ad := &models.AdData{
+        AdId: adId.String(),
+        CreatedAt: adstorage.CreatedAt,
+        OwnerId: affId.String(),
+        OfferId: offId.String(),
+        ContractAddress: adstorage.ContractAddress,
+        BeneficiaryAddress: baddr.String(),
+        PayerAddress: paddr.String(),
+        Status: adstorage.Status,
+    }
+
     rest.NewResponder(c).Success(gin.H{
-        "Ad": ad,
+        "ad": ad,
     })
 }
