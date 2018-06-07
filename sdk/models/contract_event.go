@@ -54,3 +54,20 @@ type ContractEvent struct {
     TxIndex     uint        `json:"transactionIndex"`
     Removed     bool        `json:"removed"`
 }
+
+// swagger:parameters events
+type EventsParams struct {
+    // in: body
+    Body Events `json:"body"`
+}
+
+type Events struct {
+    // filter events by list of Ethereum addresses
+    Addresses []string `json:"addresses"`
+    // filter events by list of event names
+    EventNames []string `json:"eventNames"`
+    // get events from specified block
+    StartBlock int64 `json:"startBlock"`
+    // get events to specified block
+    EndBlock int64 `json:"endBlock"`
+}

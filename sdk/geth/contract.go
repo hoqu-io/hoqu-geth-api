@@ -16,6 +16,7 @@ type Contract struct {
     Address common.Address
     Abi     abi.ABI
     Events  map[string]string
+    EventHashes  map[string]string
 }
 
 func NewContract(addr string) *Contract {
@@ -32,20 +33,44 @@ func (c *Contract) InitEvents(contractAbi string) (err error) {
     }
 
     c.Events = make(map[string]string)
+    c.EventHashes = make(map[string]string)
     for _, event := range c.Abi.Events {
         c.Events[event.Id().String()] = event.Name
+        c.EventHashes[event.Name] = event.Id().String()
     }
 
     return
 }
 
-func (c *Contract) GetEventsByTopics(topics [][]common.Hash, fromBlock *big.Int) ([]models.ContractEvent, error) {
+func (c *Contract) GetEventsByTopics(request *models.Events, fromBlock int64) ([]models.ContractEvent, error) {
+    hashAddrs := make([]common.Hash, len(request.Addresses))
+    for _, addr := range request.Addresses {
+        hashAddrs = append(hashAddrs, common.HexToHash(addr))
+    }
+
+    hashEventNames := make([]common.Hash, len(request.EventNames))
+    for _, eventName := range request.EventNames {
+        name, ok := c.EventHashes[eventName]
+        if !ok {
+            return nil, fmt.Errorf("unknown event name provided: %s", eventName)
+        }
+        hashEventNames = append(hashEventNames, common.HexToHash(name))
+    }
+
     query := ethereum.FilterQuery{
         Addresses: []common.Address{
             c.Address,
         },
-        Topics: topics,
-        FromBlock: fromBlock,
+        Topics: [][]common.Hash{hashEventNames, hashAddrs},
+        FromBlock: big.NewInt(fromBlock),
+    }
+
+    if request.StartBlock != 0 {
+        query.FromBlock = big.NewInt(request.StartBlock)
+    }
+
+    if request.EndBlock != 0 {
+        query.ToBlock = big.NewInt(request.EndBlock)
     }
 
     res, err := c.Wallet.Connection.FilterLogs(context.TODO(), query)
