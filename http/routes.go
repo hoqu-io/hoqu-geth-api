@@ -4,9 +4,9 @@
 //
 //     Schemes: http, https
 //     BasePath: /
-//     Version: 0.3.1
+//     Version: 0.4.1
 //     License: MIT http://opensource.org/licenses/MIT
-//     Contact: Denis Degterin<d.degterin@gmail.com> https://github.com/hoqu-io/hoqu-geth-api
+//     Contact: Denis Degterin <d.degterin@gmail.com> https://github.com/hoqu-io/hoqu-geth-api
 //
 //     Consumes:
 //     - application/json
@@ -36,6 +36,7 @@ import (
     "github.com/gin-gonic/gin"
     "sync"
     "hoqu-geth-api/sdk/http/middleware"
+    "hoqu-geth-api/sdk/geth/metamask"
 )
 
 var routerOnceInitializer sync.Once
@@ -48,13 +49,18 @@ func initRoutes(router *gin.Engine) {
     routerOnceInitializer.Do(func() {
         router.Use(middleware.ExecutionTime())
 
+        metamask.AddMetamaskAuthRoutes(router)
+
         initWalletRoutes(router)
         initTokenRoutes(router)
         initPresaleRoutes(router)
         initSaleRoutes(router)
         initBountyRoutes(router)
         initClaimRoutes(router)
+        initBurnerRoutes(router)
         initHoQuConfigRoutes(router)
+        initHoQuStorageRoutes(router)
         initHoquPlatformRoutes(router)
+        initHoQuRaterRoutes(router)
     })
 }

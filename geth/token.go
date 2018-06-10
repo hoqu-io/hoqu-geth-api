@@ -9,6 +9,8 @@ import (
     "math/big"
     "hoqu-geth-api/sdk/geth"
     "github.com/ethereum/go-ethereum/core/types"
+    sdkModels "hoqu-geth-api/sdk/models"
+    "hoqu-geth-api/geth/models"
 )
 
 var token *Token
@@ -20,7 +22,7 @@ type Token struct {
 
 func InitToken() error {
     c := geth.NewContract(viper.GetString("geth.addr.token"))
-    c.InitEvents(contract.ClaimableCrowdsaleABI)
+    c.InitEvents(contract.HoQuTokenABI)
 
     t, err := contract.NewHoQuToken(c.Address, c.Wallet.Connection)
     if err != nil {
@@ -58,4 +60,79 @@ func GetToken() *Token {
 
 func (t *Token) Balance(addr string) (*big.Int, error) {
     return t.Token.BalanceOf(nil, common.HexToAddress(addr))
+}
+
+func (t *Token) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, error) {
+    events, err := t.GetEventsByTopics(
+        request,
+        viper.GetInt64("geth.start_block.token"),
+    )
+    if err != nil {
+        return nil, err
+    }
+
+    resEvents := make([]sdkModels.ContractEvent, 0)
+
+    for _, event := range events {
+        addr := common.BytesToAddress(event.RawArgs[0])
+
+        switch {
+        case event.Name == "Transfer":
+            event.Args = models.TokenTransferEventArgs{
+                From: addr.String(),
+                To: common.BytesToAddress(event.RawArgs[1]).String(),
+                Amount: common.BytesToHash(event.RawArgs[2]).Big().String(),
+            }
+        case event.Name == "Approval":
+            event.Args = models.TokenApprovalEventArgs{
+                Owner: addr.String(),
+                Spender: common.BytesToAddress(event.RawArgs[1]).String(),
+                Amount: common.BytesToHash(event.RawArgs[2]).Big().String(),
+            }
+        default:
+            return nil, fmt.Errorf("unknown event type: %s", event.Name)
+        }
+
+        resEvents = append(resEvents, event)
+    }
+
+    return resEvents, nil
+}
+
+func (t *Token) Holders(request *sdkModels.Events) (map[string]string, error) {
+    request.EventNames = []string{"Transfer"}
+    events, err := t.GetEventsByTopics(
+        request,
+        viper.GetInt64("geth.start_block.token"),
+    )
+    if err != nil {
+        return nil, err
+    }
+
+    holdersBalances := make(map[string]string)
+
+    for _, event := range events {
+        from := common.BytesToAddress(event.RawArgs[0])
+        to := common.BytesToAddress(event.RawArgs[1])
+
+        if _, ok := holdersBalances[from.String()]; !ok {
+            balf, err := t.Balance(from.String())
+            if err != nil {
+                return nil, err
+            }
+
+            holdersBalances[from.String()] = balf.String()
+        }
+
+        if _, ok := holdersBalances[to.String()]; !ok {
+            bal, err := t.Balance(to.String())
+            if err != nil {
+                return nil, err
+            }
+
+            holdersBalances[to.String()] = bal.String()
+        }
+    }
+
+    return holdersBalances, nil
 }

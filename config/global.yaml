@@ -21,9 +21,13 @@ geth:
     sale: 0xd0eE519E170f272EEB2f1e895E95A719B858D998
     bounty: 0x839b3D7Bf114921cCE7162c2Ad49260Bf618A1bB
     claim: 0x639D010dC63c2d98aa506418a7BD7fdA470FCF28
-    conf: 0xf24F798967fb013e0BA5B45C12b88E71aC3B2509
-    platform: 0x6c17f029c96027b5859349ece81e46d8aecae887
+    burner: 0x403a78940972758427e6d83017ceaa7d0bc5ac92
+    conf: 0x3807b7a05Cf95574EECC38600D4eD9Dc1c5f9025
+    storage: 0x3ea7C7075C40170776C1DDaBBbE1374d9a3D5FA7
+    rater: 0xbCec7066cf3580ecdCBeA564b03dcf7B1956504F
+    platform: 0xF0C30843B9Cd6f441117D789B431e3b6Aa62c67e
   start_block:
+    token: 857820
     privPlace: 857820
     presale: 857820
     sale: 857820
@@ -34,5 +38,7 @@ geth:
   claim:
     batch_limit: 3
     batch_timeout: 1
+  meta_auth:
+    banner: HOQU Platform
 security:
   sign: simple-string-by-default

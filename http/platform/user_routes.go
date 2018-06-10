@@ -12,7 +12,6 @@ func InitUserRoutes(routerGroup *gin.RouterGroup) {
     r := routerGroup.Group("/user")
     {
         r.POST("/register", middleware.SignRequired(), postRegisterUserAction)
-        r.POST("/kyc", middleware.SignRequired(), postAddUserKycReportAction)
         r.POST("/address", middleware.SignRequired(), postAddUserAddressAction)
         r.POST("/status", middleware.SignRequired(), postSetUserStatusAction)
         r.GET("/:id", getUserAction)
@@ -48,40 +47,6 @@ func postRegisterUserAction(c *gin.Context) {
     rest.NewResponder(c).Success(gin.H{
         "tx": tx.String(),
         "id": id,
-    })
-}
-
-// swagger:route POST /platform/user/kyc users addUserKyc
-//
-// Add User KYC report.
-//
-// Each User has KYC level which reflects his trust level.
-// User KYC level can be changed only by KYC reports.
-//
-// Consumes:
-// - application/json
-// Produces:
-// - application/json
-// Responses:
-//   200: TxSuccessResponse
-//   400: RestErrorResponse
-//
-func postAddUserKycReportAction(c *gin.Context) {
-    request := &models.AddUserKycReportRequest{}
-    err := c.BindJSON(request)
-    if err != nil {
-        rest.NewResponder(c).ErrorValidation(err.Error())
-        return
-    }
-
-    tx, err := geth.GetHoquPlatform().AddUserKycReport(request)
-    if err != nil {
-        rest.NewResponder(c).Error(err.Error())
-        return
-    }
-
-    rest.NewResponder(c).Success(gin.H{
-        "tx": tx.String(),
     })
 }
 
@@ -162,7 +127,7 @@ func postSetUserStatusAction(c *gin.Context) {
 func getUserAction(c *gin.Context) {
     id := c.Param("id")
 
-    user, err := geth.GetHoquPlatform().GetUser(id)
+    user, err := geth.GetHoQuStorage().GetUser(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

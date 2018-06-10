@@ -3,6 +3,7 @@ package geth
 import (
     "github.com/spf13/viper"
     "hoqu-geth-api/sdk/geth"
+    "hoqu-geth-api/sdk/geth/metamask"
 )
 
 func InitGeth() error {
@@ -14,6 +15,8 @@ func InitGeth() error {
     if err != nil {
         return err
     }
+
+    metamask.InitAuth(viper.GetString("geth.meta_auth.banner"))
 
     if err := InitToken(); err != nil {
         return err
@@ -47,7 +50,19 @@ func InitGeth() error {
         return err
     }
 
+    if err := InitBurner(); err != nil {
+        return err
+    }
+
     if err := initHoQuConfig(); err != nil {
+        return err
+    }
+
+    if err := initHoQuStorage(); err != nil {
+        return err
+    }
+
+    if err := initHoQuRater(); err != nil {
         return err
     }
 

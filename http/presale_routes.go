@@ -6,6 +6,7 @@ import (
     "hoqu-geth-api/geth"
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
+    models2 "hoqu-geth-api/sdk/models"
 )
 
 func initPresaleRoutes(router *gin.Engine) {
@@ -129,14 +130,14 @@ func postApprovedManyAction(c *gin.Context) {
 }
 
 func postPresaleTransactionsAction(c *gin.Context) {
-    request := &models.Addresses{}
+    request := &models2.Events{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    events, err := geth.GetPresale().Events(request.Addresses)
+    events, err := geth.GetPresale().Events(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

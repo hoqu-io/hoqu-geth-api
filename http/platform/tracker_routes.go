@@ -97,13 +97,13 @@ func postSetTrackerStatusAction(c *gin.Context) {
 func getTrackerAction(c *gin.Context) {
     id := c.Param("id")
 
-    tracker, err := geth.GetHoquPlatform().GetTracker(id)
+    tracker, err := geth.GetHoQuStorage().GetTracker(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
     rest.NewResponder(c).Success(gin.H{
-        "Tracker": tracker,
+        "tracker": tracker,
     })
 }

@@ -6,6 +6,7 @@ import (
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
+    sdkModels "hoqu-geth-api/sdk/models"
 )
 
 func initTokenRoutes(router *gin.Engine) {
@@ -14,6 +15,8 @@ func initTokenRoutes(router *gin.Engine) {
         hqx.POST("/deploy", middleware.SignRequired(), postDeployTokenAction)
         hqx.GET("/balance/:address", getHqxBalanceAction)
         hqx.POST("/balances", getHqxBalancesAction)
+        hqx.POST("/transactions", postTokenTransactionsAction)
+        hqx.POST("/holders", postTokenHoldersAction)
     }
 }
 
@@ -37,6 +40,20 @@ func postDeployTokenAction(c *gin.Context) {
     })
 }
 
+// swagger:route GET /hqx/balance/:address platform getHqxBalance
+//
+// Get HQX balance
+//
+// Get particular Ethereum address HQX balance.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: GetBalanceSuccessResponse
+//   400: RestErrorResponse
+//
 func getHqxBalanceAction(c *gin.Context) {
     addr := c.Param("address")
     bal, err := geth.GetToken().Balance(addr)
@@ -51,6 +68,20 @@ func getHqxBalanceAction(c *gin.Context) {
     })
 }
 
+// swagger:route POST /hqx/balances platform getHqxBalances
+//
+// Get HQX balances
+//
+// Get HQX balances for list of Ethereum addresses.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: GetBalancesSuccessResponse
+//   400: RestErrorResponse
+//
 func getHqxBalancesAction(c *gin.Context) {
     request := &models.Addresses{}
     err := c.BindJSON(request)
@@ -71,5 +102,44 @@ func getHqxBalancesAction(c *gin.Context) {
 
     rest.NewResponder(c).Success(gin.H{
         "balances": bals,
+    })
+}
+
+func postTokenTransactionsAction(c *gin.Context) {
+    request := &sdkModels.Events{}
+    err := c.BindJSON(request)
+    if err != nil {
+        rest.NewResponder(c).ErrorValidation(err.Error())
+        return
+    }
+
+    events, err := geth.GetToken().Events(request)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "transactions": events,
+    })
+}
+
+func postTokenHoldersAction(c *gin.Context) {
+    request := &sdkModels.Events{}
+    err := c.BindJSON(request)
+    if err != nil {
+        rest.NewResponder(c).ErrorValidation(err.Error())
+        return
+    }
+
+    holders, err := geth.GetToken().Holders(request)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "count": len(holders),
+        "holders": holders,
     })
 }

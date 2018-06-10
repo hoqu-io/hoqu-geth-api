@@ -14,8 +14,8 @@ func InitLeadRoutes(routerGroup *gin.RouterGroup) {
         r.POST("/add", middleware.SignRequired(), postAddLeadAction)
         r.POST("/intermediary", middleware.SignRequired(), postAddLeadIntermediaryAction)
         r.POST("/status", middleware.SignRequired(), postSetLeadStatusAction)
-        r.POST("/sell", middleware.SignRequired(), postSellLeadAction)
-        r.GET("/:id", getLeadAction)
+        r.POST("/transact", middleware.SignRequired(), postTransactLeadAction)
+        r.POST("/get", getLeadAction)
     }
 }
 
@@ -98,7 +98,7 @@ func postAddLeadIntermediaryAction(c *gin.Context) {
 //   400: RestErrorResponse
 //
 func postSetLeadStatusAction(c *gin.Context) {
-    request := &models.SetStatusRequest{}
+    request := &models.SetLeadStatusRequest{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
@@ -116,7 +116,7 @@ func postSetLeadStatusAction(c *gin.Context) {
     })
 }
 
-// swagger:route POST /platform/lead/sell leads sellLead
+// swagger:route POST /platform/lead/transact leads transactLead
 //
 // Sell Lead.
 //
@@ -128,15 +128,15 @@ func postSetLeadStatusAction(c *gin.Context) {
 //   200: TxSuccessResponse
 //   400: RestErrorResponse
 //
-func postSellLeadAction(c *gin.Context) {
-    request := &models.IdRequest{}
+func postTransactLeadAction(c *gin.Context) {
+    request := &models.TransactLeadRequest{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    tx, err := geth.GetHoquPlatform().SellLead(request.Id)
+    tx, err := geth.GetHoquPlatform().TransactLead(request.Id, request.AdId)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -147,7 +147,7 @@ func postSellLeadAction(c *gin.Context) {
     })
 }
 
-// swagger:route GET /platform/lead/:id leads getLead
+// swagger:route POST /platform/lead/get leads getLead
 //
 // Get Lead by ID.
 //
@@ -158,15 +158,26 @@ func postSellLeadAction(c *gin.Context) {
 //   400: RestErrorResponse
 //
 func getLeadAction(c *gin.Context) {
-    id := c.Param("id")
+    request := &models.TransactLeadRequest{}
+    err := c.BindJSON(request)
+    if err != nil {
+        rest.NewResponder(c).ErrorValidation(err.Error())
+        return
+    }
 
-    lead, err := geth.GetHoquPlatform().GetLead(id)
+    adContract, err := geth.GetAdCampaign(request.AdId)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    lead, err := adContract.GetLead(request.Id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
     rest.NewResponder(c).Success(gin.H{
-        "Lead": lead,
+        "lead": lead,
     })
 }

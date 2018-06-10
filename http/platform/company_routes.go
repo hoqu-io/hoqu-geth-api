@@ -93,7 +93,7 @@ func postSetCompanyStatusAction(c *gin.Context) {
 func getCompanyAction(c *gin.Context) {
     id := c.Param("id")
 
-    company, err := geth.GetHoquPlatform().GetCompany(id)
+    company, err := geth.GetHoQuStorage().GetCompany(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

@@ -7,6 +7,7 @@ import (
     "hoqu-geth-api/geth/models"
     "hoqu-geth-api/sdk/http/middleware"
     "math/big"
+    sdkModels "hoqu-geth-api/sdk/models"
 )
 
 func initSaleRoutes(router *gin.Engine) {
@@ -144,20 +145,20 @@ func postSaleApprovedManyAction(c *gin.Context) {
 }
 
 func postSaleTransactionsAction(c *gin.Context) {
-    request := &models.Addresses{}
+    request := &sdkModels.Events{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    events, err := geth.GetSale().Events(request.Addresses)
+    events, err := geth.GetSale().Events(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
-    bEvents, err := geth.GetBounty().Events(request.Addresses)
+    bEvents, err := geth.GetBounty().Events(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

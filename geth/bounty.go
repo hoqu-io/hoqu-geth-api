@@ -94,15 +94,10 @@ func (s *Bounty) Approved(addr string) (bool, error) {
     return s.Bounty.Approved(nil, common.HexToAddress(addr))
 }
 
-func (s *Bounty) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
-    hashAddrs := make([]common.Hash, len(addrs))
-    for _, addr := range addrs {
-        hashAddrs = append(hashAddrs, common.HexToHash(addr))
-    }
-
+func (s *Bounty) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, error) {
     events, err := s.GetEventsByTopics(
-        [][]common.Hash{{}, hashAddrs},
-        big.NewInt(viper.GetInt64("geth.start_block.bounty")),
+        request,
+        viper.GetInt64("geth.start_block.bounty"),
     )
     if err != nil {
         return nil, err

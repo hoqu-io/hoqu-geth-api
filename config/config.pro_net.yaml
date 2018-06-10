@@ -10,7 +10,10 @@ geth:
     presale: 0x903E7414cb54e44766dCf03e4aB424FDf9259D78
     sale: 0xF37c4A962e70d813A4D9825942141Cd9Bc5169Fd
     bounty: 0x7dc8C210540be4EaA3Bb194B4D9B4907E0Dae04f
+    claim: 0xac5dc571f0314edd797e3ba026f6592945b53eb9
+    burner: 0x818e2ad435764b80ee844cf7b2e8036e0a4b7c83
   start_block:
+    token: 4273100
     privPlace: 4273100
     presale: 4538755
     sale: 4631026

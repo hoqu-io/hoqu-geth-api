@@ -6,7 +6,7 @@ import (
     "hoqu-geth-api/geth"
     "hoqu-geth-api/sdk/http/middleware"
     "hoqu-geth-api/http/platform"
-    "hoqu-geth-api/geth/models"
+    models2 "hoqu-geth-api/sdk/models"
 )
 
 func initHoquPlatformRoutes(router *gin.Engine) {
@@ -15,7 +15,10 @@ func initHoquPlatformRoutes(router *gin.Engine) {
         r.POST("/deploy", middleware.SignRequired(), postDeployHoquPlatformAction)
         r.POST("/events", postPlatformEventsAction)
         platform.InitUserRoutes(r)
+        platform.InitIdentificationRoutes(r)
+        platform.InitStatsRoutes(r)
         platform.InitCompanyRoutes(r)
+        platform.InitNetworkRoutes(r)
         platform.InitTrackerRoutes(r)
         platform.InitOfferRoutes(r)
         platform.InitAdRoutes(r)
@@ -25,6 +28,12 @@ func initHoquPlatformRoutes(router *gin.Engine) {
 
 func postDeployHoquPlatformAction(c *gin.Context) {
     addr, tx, err := geth.GetHoquPlatform().Deploy()
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    _, err = geth.GetHoQuConfig().AddOwner(addr.String())
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
@@ -49,14 +58,14 @@ func postDeployHoquPlatformAction(c *gin.Context) {
 //   400: RestErrorResponse
 //
 func postPlatformEventsAction(c *gin.Context) {
-    request := &models.Events{}
+    request := &models2.Events{}
     err := c.BindJSON(request)
     if err != nil {
         rest.NewResponder(c).ErrorValidation(err.Error())
         return
     }
 
-    events, err := geth.GetHoquPlatform().Events(request.Addresses, request.Latest)
+    events, err := geth.GetHoquPlatform().Events(request)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

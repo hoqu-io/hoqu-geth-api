@@ -132,15 +132,10 @@ func (p *Presale) Approved(addr string) (bool, error) {
     return p.Presale.Approved(nil, common.HexToAddress(addr))
 }
 
-func (p *Presale) Events(addrs []string) ([]sdkModels.ContractEvent, error) {
-    hashAddrs := make([]common.Hash, len(addrs))
-    for _, addr := range addrs {
-        hashAddrs = append(hashAddrs, common.HexToHash(addr))
-    }
-
+func (p *Presale) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, error) {
     events, err := p.GetEventsByTopics(
-        [][]common.Hash{{}, hashAddrs},
-        big.NewInt(viper.GetInt64("geth.start_block.presale")),
+        request,
+        viper.GetInt64("geth.start_block.presale"),
     )
     if err != nil {
         return nil, err

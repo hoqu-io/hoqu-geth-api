@@ -93,13 +93,13 @@ func postSetOfferStatusAction(c *gin.Context) {
 func getOfferAction(c *gin.Context) {
     id := c.Param("id")
 
-    offer, err := geth.GetHoquPlatform().GetOffer(id)
+    offer, err := geth.GetHoQuStorage().GetOffer(id)
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return
     }
 
     rest.NewResponder(c).Success(gin.H{
-        "Offer": offer,
+        "offer": offer,
     })
 }

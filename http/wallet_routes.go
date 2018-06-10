@@ -18,6 +18,20 @@ func initWalletRoutes(router *gin.Engine) {
     }
 }
 
+// swagger:route GET /eth/balance/:address ethereum getEthBalance
+//
+// Get ETH balance
+//
+// Get particular Ethereum address balance.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: GetBalanceSuccessResponse
+//   400: RestErrorResponse
+//
 func getEthBalanceAction(c *gin.Context) {
     addr := c.Param("address")
     bal, err := sdkGeth.GetWallet().BalanceAt(addr)
@@ -32,6 +46,20 @@ func getEthBalanceAction(c *gin.Context) {
     })
 }
 
+// swagger:route POST /eth/balances ethereum getEthBalances
+//
+// Get ETH balances
+//
+// Get balances for list of Ethereum addresses.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: GetBalancesSuccessResponse
+//   400: RestErrorResponse
+//
 func getEthBalancesAction(c *gin.Context) {
     request := &models.Addresses{}
     err := c.BindJSON(request)
@@ -55,6 +83,20 @@ func getEthBalancesAction(c *gin.Context) {
     })
 }
 
+// swagger:route GET /eth/block ethereum getEthLastBlock
+//
+// Get last block
+//
+// Get last Ethereum block data.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: GetBlockSuccessResponse
+//   400: RestErrorResponse
+//
 func getBlockHeaderByHashAction(c *gin.Context) {
     hash := c.Param("hash")
     b, err := sdkGeth.GetWallet().GetBlockHeaderByHash(common.HexToHash(hash))
@@ -71,6 +113,20 @@ func getBlockHeaderByHashAction(c *gin.Context) {
     })
 }
 
+// swagger:route GET /eth/block/:hash ethereum getEthBlockByHash
+//
+// Get block by hash
+//
+// Get Ethereum block data by its hash.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: GetBlockSuccessResponse
+//   400: RestErrorResponse
+//
 func getLatestBlockHeaderAction(c *gin.Context) {
     b, err := sdkGeth.GetWallet().GetBlockHeaderByNumber(nil)
     if err != nil {
