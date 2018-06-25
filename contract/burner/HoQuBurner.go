@@ -4273,23 +4273,4 @@ func (it *StandardTokenTransferIterator) Next() bool {
 	}
 }
 
-// Error returns any retrieval or parsing error occurred during filtering.
-func (it *StandardTokenTransferIterator) Error() error {
-	return it.fail
-}
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *StandardTokenTransferIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// StandardTokenTransfer represents a Transfer event raised by the StandardToken contract.
-type StandardTokenTransfer struct {
-	From  common.Address
-	To    common.Address
-	Value *big.Int
-	Raw   types.Log // Blockchain specific contextual infos
-}
 
