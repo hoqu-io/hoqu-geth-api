@@ -4135,39 +4135,3 @@ func (it *StandardTokenApprovalIterator) Next() bool {
 func (it *StandardTokenApprovalIterator) Error() error {
 	return it.fail
 }
-
-// Close terminates the iteration process, releasing any pending underlying
-// resources.
-func (it *StandardTokenApprovalIterator) Close() error {
-	it.sub.Unsubscribe()
-	return nil
-}
-
-// StandardTokenApproval represents a Approval event raised by the StandardToken contract.
-type StandardTokenApproval struct {
-	Owner   common.Address
-	Spender common.Address
-	Value   *big.Int
-	Raw     types.Log // Blockchain specific contextual infos
-}
-
-// FilterApproval is a free log retrieval operation binding the contract event 0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925.
-//
-// Solidity: event Approval(owner indexed address, spender indexed address, value uint256)
-func (_StandardToken *StandardTokenFilterer) FilterApproval(opts *bind.FilterOpts, owner []common.Address, spender []common.Address) (*StandardTokenApprovalIterator, error) {
-
-	var ownerRule []interface{}
-	for _, ownerItem := range owner {
-		ownerRule = append(ownerRule, ownerItem)
-	}
-	var spenderRule []interface{}
-	for _, spenderItem := range spender {
-		spenderRule = append(spenderRule, spenderItem)
-	}
-
-	logs, sub, err := _StandardToken.contract.FilterLogs(opts, "Approval", ownerRule, spenderRule)
-	if err != nil {
-		return nil, err
-	}
-	return &StandardTokenApprovalIterator{contract: _StandardToken.contract, event: "Approval", logs: logs, sub: sub}, nil
-}
