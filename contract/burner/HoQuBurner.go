@@ -2220,38 +2220,3 @@ func (_HoQuToken *HoQuTokenCaller) TotalSupply(opts *bind.CallOpts) (*big.Int, e
 	err := _HoQuToken.contract.Call(opts, out, "totalSupply")
 	return *ret0, err
 }
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_HoQuToken *HoQuTokenSession) TotalSupply() (*big.Int, error) {
-	return _HoQuToken.Contract.TotalSupply(&_HoQuToken.CallOpts)
-}
-
-// TotalSupply is a free data retrieval call binding the contract method 0x18160ddd.
-//
-// Solidity: function totalSupply() constant returns(uint256)
-func (_HoQuToken *HoQuTokenCallerSession) TotalSupply() (*big.Int, error) {
-	return _HoQuToken.Contract.TotalSupply(&_HoQuToken.CallOpts)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(_spender address, _value uint256) returns(bool)
-func (_HoQuToken *HoQuTokenTransactor) Approve(opts *bind.TransactOpts, _spender common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _HoQuToken.contract.Transact(opts, "approve", _spender, _value)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(_spender address, _value uint256) returns(bool)
-func (_HoQuToken *HoQuTokenSession) Approve(_spender common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _HoQuToken.Contract.Approve(&_HoQuToken.TransactOpts, _spender, _value)
-}
-
-// Approve is a paid mutator transaction binding the contract method 0x095ea7b3.
-//
-// Solidity: function approve(_spender address, _value uint256) returns(bool)
-func (_HoQuToken *HoQuTokenTransactorSession) Approve(_spender common.Address, _value *big.Int) (*types.Transaction, error) {
-	return _HoQuToken.Contract.Approve(&_HoQuToken.TransactOpts, _spender, _value)
-}
