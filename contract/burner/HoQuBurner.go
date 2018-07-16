@@ -2255,3 +2255,38 @@ func (_HoQuToken *HoQuTokenSession) Approve(_spender common.Address, _value *big
 func (_HoQuToken *HoQuTokenTransactorSession) Approve(_spender common.Address, _value *big.Int) (*types.Transaction, error) {
 	return _HoQuToken.Contract.Approve(&_HoQuToken.TransactOpts, _spender, _value)
 }
+
+// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+//
+// Solidity: function pause() returns(bool)
+func (_HoQuToken *HoQuTokenTransactor) Pause(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _HoQuToken.contract.Transact(opts, "pause")
+}
+
+// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+//
+// Solidity: function pause() returns(bool)
+func (_HoQuToken *HoQuTokenSession) Pause() (*types.Transaction, error) {
+	return _HoQuToken.Contract.Pause(&_HoQuToken.TransactOpts)
+}
+
+// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+//
+// Solidity: function pause() returns(bool)
+func (_HoQuToken *HoQuTokenTransactorSession) Pause() (*types.Transaction, error) {
+	return _HoQuToken.Contract.Pause(&_HoQuToken.TransactOpts)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(_to address, _value uint256) returns(bool)
+func (_HoQuToken *HoQuTokenTransactor) Transfer(opts *bind.TransactOpts, _to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _HoQuToken.contract.Transact(opts, "transfer", _to, _value)
+}
+
+// Transfer is a paid mutator transaction binding the contract method 0xa9059cbb.
+//
+// Solidity: function transfer(_to address, _value uint256) returns(bool)
+func (_HoQuToken *HoQuTokenSession) Transfer(_to common.Address, _value *big.Int) (*types.Transaction, error) {
+	return _HoQuToken.Contract.Transfer(&_HoQuToken.TransactOpts, _to, _value)
+}
