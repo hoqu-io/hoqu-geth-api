@@ -2832,3 +2832,57 @@ func (it *HoQuTokenUnpauseIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
+
+// HoQuTokenUnpause represents a Unpause event raised by the HoQuToken contract.
+type HoQuTokenUnpause struct {
+	Raw types.Log // Blockchain specific contextual infos
+}
+
+// FilterUnpause is a free log retrieval operation binding the contract event 0x7805862f689e2f13df9f062ff482ad3ad112aca9e0847911ed832e158c525b33.
+//
+// Solidity: event Unpause()
+func (_HoQuToken *HoQuTokenFilterer) FilterUnpause(opts *bind.FilterOpts) (*HoQuTokenUnpauseIterator, error) {
+
+	logs, sub, err := _HoQuToken.contract.FilterLogs(opts, "Unpause")
+	if err != nil {
+		return nil, err
+	}
+	return &HoQuTokenUnpauseIterator{contract: _HoQuToken.contract, event: "Unpause", logs: logs, sub: sub}, nil
+}
+
+// WatchUnpause is a free log subscription operation binding the contract event 0x7805862f689e2f13df9f062ff482ad3ad112aca9e0847911ed832e158c525b33.
+//
+// Solidity: event Unpause()
+func (_HoQuToken *HoQuTokenFilterer) WatchUnpause(opts *bind.WatchOpts, sink chan<- *HoQuTokenUnpause) (event.Subscription, error) {
+
+	logs, sub, err := _HoQuToken.contract.WatchLogs(opts, "Unpause")
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HoQuTokenUnpause)
+				if err := _HoQuToken.contract.UnpackLog(event, "Unpause", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
