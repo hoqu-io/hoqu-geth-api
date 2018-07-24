@@ -2886,3 +2886,90 @@ func (_HoQuToken *HoQuTokenFilterer) WatchUnpause(opts *bind.WatchOpts, sink cha
 		}
 	}), nil
 }
+
+// OwnableABI is the input ABI used to generate the binding from.
+const OwnableABI = "[{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}]"
+
+// OwnableBin is the compiled bytecode used for deploying new contracts.
+const OwnableBin = `0x6060604052341561000f57600080fd5b60008054600160a060020a033316600160a060020a031990911617905561017f8061003b6000396000f30060606040526004361061004b5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416638da5cb5b8114610050578063f2fde38b1461008c575b600080fd5b341561005b57600080fd5b6100636100ba565b60405173ffffffffffffffffffffffffffffffffffffffff909116815260200160405180910390f35b341561009757600080fd5b6100b873ffffffffffffffffffffffffffffffffffffffff600435166100d6565b005b60005473ffffffffffffffffffffffffffffffffffffffff1681565b6000543373ffffffffffffffffffffffffffffffffffffffff9081169116146100fe57600080fd5b73ffffffffffffffffffffffffffffffffffffffff811615610150576000805473ffffffffffffffffffffffffffffffffffffffff191673ffffffffffffffffffffffffffffffffffffffff83161790555b505600a165627a7a723058208a9388c333db0ce07c8fd6b5233d6285dba9c946e3dd3f519ba416512abe3ac20029`
+
+// DeployOwnable deploys a new Ethereum contract, binding an instance of Ownable to it.
+func DeployOwnable(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Ownable, error) {
+	parsed, err := abi.JSON(strings.NewReader(OwnableABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(OwnableBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Ownable{OwnableCaller: OwnableCaller{contract: contract}, OwnableTransactor: OwnableTransactor{contract: contract}, OwnableFilterer: OwnableFilterer{contract: contract}}, nil
+}
+
+// Ownable is an auto generated Go binding around an Ethereum contract.
+type Ownable struct {
+	OwnableCaller     // Read-only binding to the contract
+	OwnableTransactor // Write-only binding to the contract
+	OwnableFilterer   // Log filterer for contract events
+}
+
+// OwnableCaller is an auto generated read-only Go binding around an Ethereum contract.
+type OwnableCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OwnableTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type OwnableTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OwnableFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type OwnableFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// OwnableSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type OwnableSession struct {
+	Contract     *Ownable          // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// OwnableCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type OwnableCallerSession struct {
+	Contract *OwnableCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts  // Call options to use throughout this session
+}
+
+// OwnableTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type OwnableTransactorSession struct {
+	Contract     *OwnableTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts  // Transaction auth options to use throughout this session
+}
+
+// OwnableRaw is an auto generated low-level Go binding around an Ethereum contract.
+type OwnableRaw struct {
+	Contract *Ownable // Generic contract binding to access the raw methods on
+}
+
+// OwnableCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type OwnableCallerRaw struct {
+	Contract *OwnableCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// OwnableTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type OwnableTransactorRaw struct {
+	Contract *OwnableTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewOwnable creates a new instance of Ownable, bound to a specific deployed contract.
+func NewOwnable(address common.Address, backend bind.ContractBackend) (*Ownable, error) {
+	contract, err := bindOwnable(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &Ownable{OwnableCaller: OwnableCaller{contract: contract}, OwnableTransactor: OwnableTransactor{contract: contract}, OwnableFilterer: OwnableFilterer{contract: contract}}, nil
+}
