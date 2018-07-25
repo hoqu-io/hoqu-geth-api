@@ -3023,3 +3023,53 @@ func (_Ownable *OwnableRaw) Call(opts *bind.CallOpts, result interface{}, method
 func (_Ownable *OwnableRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _Ownable.Contract.OwnableTransactor.contract.Transfer(opts)
 }
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Ownable *OwnableRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Ownable.Contract.OwnableTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_Ownable *OwnableCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _Ownable.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_Ownable *OwnableTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Ownable.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_Ownable *OwnableTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _Ownable.Contract.contract.Transact(opts, method, params...)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Ownable *OwnableCaller) Owner(opts *bind.CallOpts) (common.Address, error) {
+	var (
+		ret0 = new(common.Address)
+	)
+	out := ret0
+	err := _Ownable.contract.Call(opts, out, "owner")
+	return *ret0, err
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Ownable *OwnableSession) Owner() (common.Address, error) {
+	return _Ownable.Contract.Owner(&_Ownable.CallOpts)
+}
+
+// Owner is a free data retrieval call binding the contract method 0x8da5cb5b.
+//
+// Solidity: function owner() constant returns(address)
+func (_Ownable *OwnableCallerSession) Owner() (common.Address, error) {
+	return _Ownable.Contract.Owner(&_Ownable.CallOpts)
+}
