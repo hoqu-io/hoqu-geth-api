@@ -3073,3 +3073,55 @@ func (_Ownable *OwnableSession) Owner() (common.Address, error) {
 func (_Ownable *OwnableCallerSession) Owner() (common.Address, error) {
 	return _Ownable.Contract.Owner(&_Ownable.CallOpts)
 }
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Ownable *OwnableTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.contract.Transact(opts, "transferOwnership", newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Ownable *OwnableSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Ownable *OwnableTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Ownable.Contract.TransferOwnership(&_Ownable.TransactOpts, newOwner)
+}
+
+// PausableABI is the input ABI used to generate the binding from.
+const PausableABI = "[{\"constant\":false,\"inputs\":[],\"name\":\"unpause\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"paused\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[],\"name\":\"pause\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"owner\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"newOwner\",\"type\":\"address\"}],\"name\":\"transferOwnership\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"Pause\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[],\"name\":\"Unpause\",\"type\":\"event\"}]"
+
+// PausableBin is the compiled bytecode used for deploying new contracts.
+const PausableBin = `0x606060405260008054600160a060020a033316600160a860020a0319909116179055610300806100306000396000f30060606040526004361061006c5763ffffffff7c01000000000000000000000000000000000000000000000000000000006000350416633f4ba83a81146100715780635c975abb146100985780638456cb59146100ab5780638da5cb5b146100be578063f2fde38b146100ed575b600080fd5b341561007c57600080fd5b61008461010e565b604051901515815260200160405180910390f35b34156100a357600080fd5b6100846101a3565b34156100b657600080fd5b6100846101c4565b34156100c957600080fd5b6100d161026f565b604051600160a060020a03909116815260200160405180910390f35b34156100f857600080fd5b61010c600160a060020a036004351661027e565b005b6000805433600160a060020a0390811691161461012a57600080fd5b60005474010000000000000000000000000000000000000000900460ff16151561015357600080fd5b6000805474ff0000000000000000000000000000000000000000191690557f7805862f689e2f13df9f062ff482ad3ad112aca9e0847911ed832e158c525b3360405160405180910390a150600190565b60005474010000000000000000000000000000000000000000900460ff1681565b6000805433600160a060020a039081169116146101e057600080fd5b60005474010000000000000000000000000000000000000000900460ff161561020857600080fd5b6000805474ff00000000000000000000000000000000000000001916740100000000000000000000000000000000000000001790557f6985a02210a168e66602d3235cb6db0e70f92b3ba4d376a33c0f3d9434bff62560405160405180910390a150600190565b600054600160a060020a031681565b60005433600160a060020a0390811691161461029957600080fd5b600160a060020a038116156102d1576000805473ffffffffffffffffffffffffffffffffffffffff1916600160a060020a0383161790555b505600a165627a7a723058200378361b505ae21c68272efb291324458d126ef5d16de95e9376b1002cdcdf8c0029`
+
+// DeployPausable deploys a new Ethereum contract, binding an instance of Pausable to it.
+func DeployPausable(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *Pausable, error) {
+	parsed, err := abi.JSON(strings.NewReader(PausableABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(PausableBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &Pausable{PausableCaller: PausableCaller{contract: contract}, PausableTransactor: PausableTransactor{contract: contract}, PausableFilterer: PausableFilterer{contract: contract}}, nil
+}
+
+// Pausable is an auto generated Go binding around an Ethereum contract.
+type Pausable struct {
+	PausableCaller     // Read-only binding to the contract
+	PausableTransactor // Write-only binding to the contract
+	PausableFilterer   // Log filterer for contract events
+}
+
+// PausableCaller is an auto generated read-only Go binding around an Ethereum contract.
+type PausableCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
