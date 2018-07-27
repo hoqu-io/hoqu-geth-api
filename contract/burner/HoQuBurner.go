@@ -3125,3 +3125,50 @@ type Pausable struct {
 type PausableCaller struct {
 	contract *bind.BoundContract // Generic contract wrapper for the low level calls
 }
+
+// PausableTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type PausableTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// PausableFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type PausableFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// PausableSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type PausableSession struct {
+	Contract     *Pausable         // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// PausableCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type PausableCallerSession struct {
+	Contract *PausableCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts   // Call options to use throughout this session
+}
+
+// PausableTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type PausableTransactorSession struct {
+	Contract     *PausableTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+}
+
+// PausableRaw is an auto generated low-level Go binding around an Ethereum contract.
+type PausableRaw struct {
+	Contract *Pausable // Generic contract binding to access the raw methods on
+}
+
+// PausableCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type PausableCallerRaw struct {
+	Contract *PausableCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// PausableTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type PausableTransactorRaw struct {
+	Contract *PausableTransactor // Generic write-only contract binding to access the raw methods on
+}
