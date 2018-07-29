@@ -3314,3 +3314,72 @@ func (_Pausable *PausableCallerSession) Paused() (bool, error) {
 func (_Pausable *PausableTransactor) Pause(opts *bind.TransactOpts) (*types.Transaction, error) {
 	return _Pausable.contract.Transact(opts, "pause")
 }
+
+// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+//
+// Solidity: function pause() returns(bool)
+func (_Pausable *PausableSession) Pause() (*types.Transaction, error) {
+	return _Pausable.Contract.Pause(&_Pausable.TransactOpts)
+}
+
+// Pause is a paid mutator transaction binding the contract method 0x8456cb59.
+//
+// Solidity: function pause() returns(bool)
+func (_Pausable *PausableTransactorSession) Pause() (*types.Transaction, error) {
+	return _Pausable.Contract.Pause(&_Pausable.TransactOpts)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Pausable *PausableTransactor) TransferOwnership(opts *bind.TransactOpts, newOwner common.Address) (*types.Transaction, error) {
+	return _Pausable.contract.Transact(opts, "transferOwnership", newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Pausable *PausableSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Pausable.Contract.TransferOwnership(&_Pausable.TransactOpts, newOwner)
+}
+
+// TransferOwnership is a paid mutator transaction binding the contract method 0xf2fde38b.
+//
+// Solidity: function transferOwnership(newOwner address) returns()
+func (_Pausable *PausableTransactorSession) TransferOwnership(newOwner common.Address) (*types.Transaction, error) {
+	return _Pausable.Contract.TransferOwnership(&_Pausable.TransactOpts, newOwner)
+}
+
+// Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
+//
+// Solidity: function unpause() returns(bool)
+func (_Pausable *PausableTransactor) Unpause(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _Pausable.contract.Transact(opts, "unpause")
+}
+
+// Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
+//
+// Solidity: function unpause() returns(bool)
+func (_Pausable *PausableSession) Unpause() (*types.Transaction, error) {
+	return _Pausable.Contract.Unpause(&_Pausable.TransactOpts)
+}
+
+// Unpause is a paid mutator transaction binding the contract method 0x3f4ba83a.
+//
+// Solidity: function unpause() returns(bool)
+func (_Pausable *PausableTransactorSession) Unpause() (*types.Transaction, error) {
+	return _Pausable.Contract.Unpause(&_Pausable.TransactOpts)
+}
+
+// PausablePauseIterator is returned from FilterPause and is used to iterate over the raw logs and unpacked data for Pause events raised by the Pausable contract.
+type PausablePauseIterator struct {
+	Event *PausablePause // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
