@@ -3631,3 +3631,250 @@ func DeploySafeMath(auth *bind.TransactOpts, backend bind.ContractBackend) (comm
 	}
 	return address, tx, &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
 }
+
+// SafeMath is an auto generated Go binding around an Ethereum contract.
+type SafeMath struct {
+	SafeMathCaller     // Read-only binding to the contract
+	SafeMathTransactor // Write-only binding to the contract
+	SafeMathFilterer   // Log filterer for contract events
+}
+
+// SafeMathCaller is an auto generated read-only Go binding around an Ethereum contract.
+type SafeMathCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// SafeMathTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type SafeMathTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// SafeMathFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type SafeMathFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// SafeMathSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type SafeMathSession struct {
+	Contract     *SafeMath         // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// SafeMathCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type SafeMathCallerSession struct {
+	Contract *SafeMathCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts   // Call options to use throughout this session
+}
+
+// SafeMathTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type SafeMathTransactorSession struct {
+	Contract     *SafeMathTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts   // Transaction auth options to use throughout this session
+}
+
+// SafeMathRaw is an auto generated low-level Go binding around an Ethereum contract.
+type SafeMathRaw struct {
+	Contract *SafeMath // Generic contract binding to access the raw methods on
+}
+
+// SafeMathCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type SafeMathCallerRaw struct {
+	Contract *SafeMathCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// SafeMathTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type SafeMathTransactorRaw struct {
+	Contract *SafeMathTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewSafeMath creates a new instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMath(address common.Address, backend bind.ContractBackend) (*SafeMath, error) {
+	contract, err := bindSafeMath(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMath{SafeMathCaller: SafeMathCaller{contract: contract}, SafeMathTransactor: SafeMathTransactor{contract: contract}, SafeMathFilterer: SafeMathFilterer{contract: contract}}, nil
+}
+
+// NewSafeMathCaller creates a new read-only instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMathCaller(address common.Address, caller bind.ContractCaller) (*SafeMathCaller, error) {
+	contract, err := bindSafeMath(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMathCaller{contract: contract}, nil
+}
+
+// NewSafeMathTransactor creates a new write-only instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMathTransactor(address common.Address, transactor bind.ContractTransactor) (*SafeMathTransactor, error) {
+	contract, err := bindSafeMath(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMathTransactor{contract: contract}, nil
+}
+
+// NewSafeMathFilterer creates a new log filterer instance of SafeMath, bound to a specific deployed contract.
+func NewSafeMathFilterer(address common.Address, filterer bind.ContractFilterer) (*SafeMathFilterer, error) {
+	contract, err := bindSafeMath(address, nil, nil, filterer)
+	if err != nil {
+		return nil, err
+	}
+	return &SafeMathFilterer{contract: contract}, nil
+}
+
+// bindSafeMath binds a generic wrapper to an already deployed contract.
+func bindSafeMath(address common.Address, caller bind.ContractCaller, transactor bind.ContractTransactor, filterer bind.ContractFilterer) (*bind.BoundContract, error) {
+	parsed, err := abi.JSON(strings.NewReader(SafeMathABI))
+	if err != nil {
+		return nil, err
+	}
+	return bind.NewBoundContract(address, parsed, caller, transactor, filterer), nil
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_SafeMath *SafeMathRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _SafeMath.Contract.SafeMathCaller.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_SafeMath *SafeMathRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SafeMath.Contract.SafeMathTransactor.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_SafeMath *SafeMathRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _SafeMath.Contract.SafeMathTransactor.contract.Transact(opts, method, params...)
+}
+
+// Call invokes the (constant) contract method with params as input values and
+// sets the output to result. The result type might be a single field for simple
+// returns, a slice of interfaces for anonymous returns and a struct for named
+// returns.
+func (_SafeMath *SafeMathCallerRaw) Call(opts *bind.CallOpts, result interface{}, method string, params ...interface{}) error {
+	return _SafeMath.Contract.contract.Call(opts, result, method, params...)
+}
+
+// Transfer initiates a plain transaction to move funds to the contract, calling
+// its default method if one is available.
+func (_SafeMath *SafeMathTransactorRaw) Transfer(opts *bind.TransactOpts) (*types.Transaction, error) {
+	return _SafeMath.Contract.contract.Transfer(opts)
+}
+
+// Transact invokes the (paid) contract method with params as input values.
+func (_SafeMath *SafeMathTransactorRaw) Transact(opts *bind.TransactOpts, method string, params ...interface{}) (*types.Transaction, error) {
+	return _SafeMath.Contract.contract.Transact(opts, method, params...)
+}
+
+// StandardTokenABI is the input ABI used to generate the binding from.
+const StandardTokenABI = "[{\"constant\":false,\"inputs\":[{\"name\":\"_spender\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"approve\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":\"totalSupply\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_from\",\"type\":\"address\"},{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transferFrom\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"}],\"name\":\"balanceOf\",\"outputs\":[{\"name\":\"balance\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"_to\",\"type\":\"address\"},{\"name\":\"_value\",\"type\":\"uint256\"}],\"name\":\"transfer\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"_owner\",\"type\":\"address\"},{\"name\":\"_spender\",\"type\":\"address\"}],\"name\":\"allowance\",\"outputs\":[{\"name\":\"remaining\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"owner\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"spender\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Approval\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"name\":\"from\",\"type\":\"address\"},{\"indexed\":true,\"name\":\"to\",\"type\":\"address\"},{\"indexed\":false,\"name\":\"value\",\"type\":\"uint256\"}],\"name\":\"Transfer\",\"type\":\"event\"}]"
+
+// StandardTokenBin is the compiled bytecode used for deploying new contracts.
+const StandardTokenBin = `0x6060604052341561000f57600080fd5b61047d8061001e6000396000f3006060604052600436106100775763ffffffff7c0100000000000000000000000000000000000000000000000000000000600035041663095ea7b3811461007c57806318160ddd146100b257806323b872dd146100d757806370a08231146100ff578063a9059cbb1461011e578063dd62ed3e14610140575b600080fd5b341561008757600080fd5b61009e600160a060020a0360043516602435610165565b604051901515815260200160405180910390f35b34156100bd57600080fd5b6100c561020b565b60405190815260200160405180910390f35b34156100e257600080fd5b61009e600160a060020a0360043581169060243516604435610211565b341561010a57600080fd5b6100c5600160a060020a0360043516610324565b341561012957600080fd5b61009e600160a060020a036004351660243561033f565b341561014b57600080fd5b6100c5600160a060020a03600435811690602435166103fe565b60008115806101975750600160a060020a03338116600090815260026020908152604080832093871683529290522054155b15156101a257600080fd5b600160a060020a03338116600081815260026020908152604080832094881680845294909152908190208590557f8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b9259085905190815260200160405180910390a350600192915050565b60005481565b600160a060020a038084166000908152600260209081526040808320338516845282528083205493861683526001909152812054909190610258908463ffffffff61042916565b600160a060020a03808616600090815260016020526040808220939093559087168152205461028d908463ffffffff61043f16565b600160a060020a0386166000908152600160205260409020556102b6818463ffffffff61043f16565b600160a060020a03808716600081815260026020908152604080832033861684529091529081902093909355908616917fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9086905190815260200160405180910390a3506001949350505050565b600160a060020a031660009081526001602052604090205490565b600160a060020a033316600090815260016020526040812054610368908363ffffffff61043f16565b600160a060020a03338116600090815260016020526040808220939093559085168152205461039d908363ffffffff61042916565b600160a060020a0380851660008181526001602052604090819020939093559133909116907fddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef9085905190815260200160405180910390a350600192915050565b600160a060020a03918216600090815260026020908152604080832093909416825291909152205490565b60008282018381101561043857fe5b9392505050565b60008282111561044b57fe5b509003905600a165627a7a723058204920069c8c2f1efac01ebbf23d4c5e17a0d2c158e461157b391cfb780d9ffc0f0029`
+
+// DeployStandardToken deploys a new Ethereum contract, binding an instance of StandardToken to it.
+func DeployStandardToken(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *StandardToken, error) {
+	parsed, err := abi.JSON(strings.NewReader(StandardTokenABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(StandardTokenBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &StandardToken{StandardTokenCaller: StandardTokenCaller{contract: contract}, StandardTokenTransactor: StandardTokenTransactor{contract: contract}, StandardTokenFilterer: StandardTokenFilterer{contract: contract}}, nil
+}
+
+// StandardToken is an auto generated Go binding around an Ethereum contract.
+type StandardToken struct {
+	StandardTokenCaller     // Read-only binding to the contract
+	StandardTokenTransactor // Write-only binding to the contract
+	StandardTokenFilterer   // Log filterer for contract events
+}
+
+// StandardTokenCaller is an auto generated read-only Go binding around an Ethereum contract.
+type StandardTokenCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// StandardTokenTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type StandardTokenTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// StandardTokenFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type StandardTokenFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// StandardTokenSession is an auto generated Go binding around an Ethereum contract,
+// with pre-set call and transact options.
+type StandardTokenSession struct {
+	Contract     *StandardToken    // Generic contract binding to set the session for
+	CallOpts     bind.CallOpts     // Call options to use throughout this session
+	TransactOpts bind.TransactOpts // Transaction auth options to use throughout this session
+}
+
+// StandardTokenCallerSession is an auto generated read-only Go binding around an Ethereum contract,
+// with pre-set call options.
+type StandardTokenCallerSession struct {
+	Contract *StandardTokenCaller // Generic contract caller binding to set the session for
+	CallOpts bind.CallOpts        // Call options to use throughout this session
+}
+
+// StandardTokenTransactorSession is an auto generated write-only Go binding around an Ethereum contract,
+// with pre-set transact options.
+type StandardTokenTransactorSession struct {
+	Contract     *StandardTokenTransactor // Generic contract transactor binding to set the session for
+	TransactOpts bind.TransactOpts        // Transaction auth options to use throughout this session
+}
+
+// StandardTokenRaw is an auto generated low-level Go binding around an Ethereum contract.
+type StandardTokenRaw struct {
+	Contract *StandardToken // Generic contract binding to access the raw methods on
+}
+
+// StandardTokenCallerRaw is an auto generated low-level read-only Go binding around an Ethereum contract.
+type StandardTokenCallerRaw struct {
+	Contract *StandardTokenCaller // Generic read-only contract binding to access the raw methods on
+}
+
+// StandardTokenTransactorRaw is an auto generated low-level write-only Go binding around an Ethereum contract.
+type StandardTokenTransactorRaw struct {
+	Contract *StandardTokenTransactor // Generic write-only contract binding to access the raw methods on
+}
+
+// NewStandardToken creates a new instance of StandardToken, bound to a specific deployed contract.
+func NewStandardToken(address common.Address, backend bind.ContractBackend) (*StandardToken, error) {
+	contract, err := bindStandardToken(address, backend, backend, backend)
+	if err != nil {
+		return nil, err
+	}
+	return &StandardToken{StandardTokenCaller: StandardTokenCaller{contract: contract}, StandardTokenTransactor: StandardTokenTransactor{contract: contract}, StandardTokenFilterer: StandardTokenFilterer{contract: contract}}, nil
+}
+
+// NewStandardTokenCaller creates a new read-only instance of StandardToken, bound to a specific deployed contract.
+func NewStandardTokenCaller(address common.Address, caller bind.ContractCaller) (*StandardTokenCaller, error) {
+	contract, err := bindStandardToken(address, caller, nil, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &StandardTokenCaller{contract: contract}, nil
+}
+
+// NewStandardTokenTransactor creates a new write-only instance of StandardToken, bound to a specific deployed contract.
+func NewStandardTokenTransactor(address common.Address, transactor bind.ContractTransactor) (*StandardTokenTransactor, error) {
+	contract, err := bindStandardToken(address, nil, transactor, nil)
+	if err != nil {
+		return nil, err
+	}
+	return &StandardTokenTransactor{contract: contract}, nil
+}
