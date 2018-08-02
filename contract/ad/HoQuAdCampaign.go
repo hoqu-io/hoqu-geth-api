@@ -7476,8 +7476,3 @@ func (_Ownable *OwnableFilterer) WatchOwnershipTransferred(opts *bind.WatchOpts,
 	}), nil
 }
 
-// SafeMathABI is the input ABI used to generate the binding from.
-const SafeMathABI = "[]"
-
-// SafeMathBin is the compiled bytecode used for deploying new contracts.
-const SafeMathBin = `0x604c602c600b82828239805160001a60731460008114601c57601e565bfe5b5030600052607381538281f30073000000000000000000000000000000000000000030146080604052600080fd00a165627a7a723058204b0833ca02fe1aa398f2bd537624b0972c3af7a3a4e3fcd6ba952f7fa3886c310029`
