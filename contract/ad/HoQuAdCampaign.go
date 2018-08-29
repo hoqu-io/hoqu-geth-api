@@ -5809,3 +5809,70 @@ func (it *HoQuStorageIdentificationAddedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
+
+// HoQuStorageIdentificationAdded represents a IdentificationAdded event raised by the HoQuStorage contract.
+type HoQuStorageIdentificationAdded struct {
+	OwnerAddress common.Address
+	Id           [16]byte
+	Name         string
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterIdentificationAdded is a free log retrieval operation binding the contract event 0xa5c73c5ece99b6456d1b224c43e2a1fc268c1e3a14156f135f3e8bdec2ff9a5a.
+//
+// Solidity: event IdentificationAdded(ownerAddress indexed address, id bytes16, name string)
+func (_HoQuStorage *HoQuStorageFilterer) FilterIdentificationAdded(opts *bind.FilterOpts, ownerAddress []common.Address) (*HoQuStorageIdentificationAddedIterator, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.FilterLogs(opts, "IdentificationAdded", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return &HoQuStorageIdentificationAddedIterator{contract: _HoQuStorage.contract, event: "IdentificationAdded", logs: logs, sub: sub}, nil
+}
+
+// WatchIdentificationAdded is a free log subscription operation binding the contract event 0xa5c73c5ece99b6456d1b224c43e2a1fc268c1e3a14156f135f3e8bdec2ff9a5a.
+//
+// Solidity: event IdentificationAdded(ownerAddress indexed address, id bytes16, name string)
+func (_HoQuStorage *HoQuStorageFilterer) WatchIdentificationAdded(opts *bind.WatchOpts, sink chan<- *HoQuStorageIdentificationAdded, ownerAddress []common.Address) (event.Subscription, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.WatchLogs(opts, "IdentificationAdded", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HoQuStorageIdentificationAdded)
+				if err := _HoQuStorage.contract.UnpackLog(event, "IdentificationAdded", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
