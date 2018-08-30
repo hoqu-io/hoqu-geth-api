@@ -5967,3 +5967,107 @@ func (_HoQuStorage *HoQuStorageFilterer) FilterKycReportAdded(opts *bind.FilterO
 	}
 	return &HoQuStorageKycReportAddedIterator{contract: _HoQuStorage.contract, event: "KycReportAdded", logs: logs, sub: sub}, nil
 }
+
+// WatchKycReportAdded is a free log subscription operation binding the contract event 0x92262b4b81e23d81eaec5e9e8c9439f0a59929da8c5d49b32bca92c112f4172a.
+//
+// Solidity: event KycReportAdded(ownerAddress indexed address, kycLevel uint8)
+func (_HoQuStorage *HoQuStorageFilterer) WatchKycReportAdded(opts *bind.WatchOpts, sink chan<- *HoQuStorageKycReportAdded, ownerAddress []common.Address) (event.Subscription, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.WatchLogs(opts, "KycReportAdded", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HoQuStorageKycReportAdded)
+				if err := _HoQuStorage.contract.UnpackLog(event, "KycReportAdded", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// HoQuStorageNetworkRegisteredIterator is returned from FilterNetworkRegistered and is used to iterate over the raw logs and unpacked data for NetworkRegistered events raised by the HoQuStorage contract.
+type HoQuStorageNetworkRegisteredIterator struct {
+	Event *HoQuStorageNetworkRegistered // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HoQuStorageNetworkRegisteredIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HoQuStorageNetworkRegistered)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HoQuStorageNetworkRegistered)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+vent name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
