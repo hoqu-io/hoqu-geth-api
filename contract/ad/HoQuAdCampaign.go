@@ -5876,3 +5876,94 @@ func (_HoQuStorage *HoQuStorageFilterer) WatchIdentificationAdded(opts *bind.Wat
 		}
 	}), nil
 }
+
+// HoQuStorageKycReportAddedIterator is returned from FilterKycReportAdded and is used to iterate over the raw logs and unpacked data for KycReportAdded events raised by the HoQuStorage contract.
+type HoQuStorageKycReportAddedIterator struct {
+	Event *HoQuStorageKycReportAdded // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HoQuStorageKycReportAddedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HoQuStorageKycReportAdded)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HoQuStorageKycReportAdded)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HoQuStorageKycReportAddedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HoQuStorageKycReportAddedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HoQuStorageKycReportAdded represents a KycReportAdded event raised by the HoQuStorage contract.
+type HoQuStorageKycReportAdded struct {
+	OwnerAddress common.Address
+	KycLevel     uint8
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterKycReportAdded is a free log retrieval operation binding the contract event 0x92262b4b81e23d81eaec5e9e8c9439f0a59929da8c5d49b32bca92c112f4172a.
+//
+// Solidity: event KycReportAdded(ownerAddress indexed address, kycLevel uint8)
+func (_HoQuStorage *HoQuStorageFilterer) FilterKycReportAdded(opts *bind.FilterOpts, ownerAddress []common.Address) (*HoQuStorageKycReportAddedIterator, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.FilterLogs(opts, "KycReportAdded", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return &HoQuStorageKycReportAddedIterator{contract: _HoQuStorage.contract, event: "KycReportAdded", logs: logs, sub: sub}, nil
+}
