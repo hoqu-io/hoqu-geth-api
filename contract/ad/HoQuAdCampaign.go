@@ -6235,3 +6235,112 @@ func (_HoQuStorage *HoQuStorageFilterer) FilterOfferAdded(opts *bind.FilterOpts,
 	}
 	return &HoQuStorageOfferAddedIterator{contract: _HoQuStorage.contract, event: "OfferAdded", logs: logs, sub: sub}, nil
 }
+
+// WatchOfferAdded is a free log subscription operation binding the contract event 0x5c9100ad970db426d43d47b3a9639dc42d9732871d99213dcb4984f7e71509d0.
+//
+// Solidity: event OfferAdded(ownerAddress indexed address, id bytes16, name string)
+func (_HoQuStorage *HoQuStorageFilterer) WatchOfferAdded(opts *bind.WatchOpts, sink chan<- *HoQuStorageOfferAdded, ownerAddress []common.Address) (event.Subscription, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.WatchLogs(opts, "OfferAdded", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HoQuStorageOfferAdded)
+				if err := _HoQuStorage.contract.UnpackLog(event, "OfferAdded", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// HoQuStorageStatsChangedIterator is returned from FilterStatsChanged and is used to iterate over the raw logs and unpacked data for StatsChanged events raised by the HoQuStorage contract.
+type HoQuStorageStatsChangedIterator struct {
+	Event *HoQuStorageStatsChanged // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HoQuStorageStatsChangedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HoQuStorageStatsChanged)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HoQuStorageStatsChanged)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HoQuStorageStatsChangedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HoQuStorageStatsChangedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
