@@ -6466,3 +6466,40 @@ func (it *HoQuStorageTrackerRegisteredIterator) Next() bool {
 		return it.Next()
 	}
 }
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HoQuStorageTrackerRegisteredIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HoQuStorageTrackerRegisteredIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HoQuStorageTrackerRegistered represents a TrackerRegistered event raised by the HoQuStorage contract.
+type HoQuStorageTrackerRegistered struct {
+	OwnerAddress common.Address
+	Id           [16]byte
+	Name         string
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterTrackerRegistered is a free log retrieval operation binding the contract event 0xb2f67f32df451ce918abd944fd5c8a29589848693057913c5060a8e0f293b388.
+//
+// Solidity: event TrackerRegistered(ownerAddress indexed address, id bytes16, name string)
+func (_HoQuStorage *HoQuStorageFilterer) FilterTrackerRegistered(opts *bind.FilterOpts, ownerAddress []common.Address) (*HoQuStorageTrackerRegisteredIterator, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.FilterLogs(opts, "TrackerRegistered", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return &HoQuStorageTrackerRegisteredIterator{contract: _HoQuStorage.contract, event: "TrackerRegistered", logs: logs, sub: sub}, nil
+}
