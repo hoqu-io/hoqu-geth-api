@@ -6503,3 +6503,58 @@ func (_HoQuStorage *HoQuStorageFilterer) FilterTrackerRegistered(opts *bind.Filt
 	}
 	return &HoQuStorageTrackerRegisteredIterator{contract: _HoQuStorage.contract, event: "TrackerRegistered", logs: logs, sub: sub}, nil
 }
+
+// WatchTrackerRegistered is a free log subscription operation binding the contract event 0xb2f67f32df451ce918abd944fd5c8a29589848693057913c5060a8e0f293b388.
+//
+// Solidity: event TrackerRegistered(ownerAddress indexed address, id bytes16, name string)
+func (_HoQuStorage *HoQuStorageFilterer) WatchTrackerRegistered(opts *bind.WatchOpts, sink chan<- *HoQuStorageTrackerRegistered, ownerAddress []common.Address) (event.Subscription, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.WatchLogs(opts, "TrackerRegistered", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HoQuStorageTrackerRegistered)
+				if err := _HoQuStorage.contract.UnpackLog(event, "TrackerRegistered", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
+
+// HoQuStorageUserAddressAddedIterator is returned from FilterUserAddressAdded and is used to iterate over the raw logs and unpacked data for UserAddressAdded events raised by the HoQuStorage contract.
+type HoQuStorageUserAddressAddedIterator struct {
+	Event *HoQuStorageUserAddressAdded // Event containing the contract specifics and raw log
+
+	contract *bind.BoundContract // Generic contract to use for unpacking event data
+	event    string              // Event name to use for unpacking event data
+
+	logs chan types.Log        // Log channel receiving the found contract events
+	sub  ethereum.Subscription // Subscription for errors, completion and termination
+	done bool                  // Whether the subscription completed delivering logs
+	fail error                 // Occurred error to stop iteration
+}
