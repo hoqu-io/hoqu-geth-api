@@ -6344,3 +6344,70 @@ func (it *HoQuStorageStatsChangedIterator) Close() error {
 	it.sub.Unsubscribe()
 	return nil
 }
+
+// HoQuStorageStatsChanged represents a StatsChanged event raised by the HoQuStorage contract.
+type HoQuStorageStatsChanged struct {
+	OwnerAddress common.Address
+	Id           [16]byte
+	Rating       *big.Int
+	Raw          types.Log // Blockchain specific contextual infos
+}
+
+// FilterStatsChanged is a free log retrieval operation binding the contract event 0xd2e9a0e1a68c0320c3b58608fcefa40787236bd0d2153ebbd82690b3fa064ad4.
+//
+// Solidity: event StatsChanged(ownerAddress indexed address, id bytes16, rating uint256)
+func (_HoQuStorage *HoQuStorageFilterer) FilterStatsChanged(opts *bind.FilterOpts, ownerAddress []common.Address) (*HoQuStorageStatsChangedIterator, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.FilterLogs(opts, "StatsChanged", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return &HoQuStorageStatsChangedIterator{contract: _HoQuStorage.contract, event: "StatsChanged", logs: logs, sub: sub}, nil
+}
+
+// WatchStatsChanged is a free log subscription operation binding the contract event 0xd2e9a0e1a68c0320c3b58608fcefa40787236bd0d2153ebbd82690b3fa064ad4.
+//
+// Solidity: event StatsChanged(ownerAddress indexed address, id bytes16, rating uint256)
+func (_HoQuStorage *HoQuStorageFilterer) WatchStatsChanged(opts *bind.WatchOpts, sink chan<- *HoQuStorageStatsChanged, ownerAddress []common.Address) (event.Subscription, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.WatchLogs(opts, "StatsChanged", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HoQuStorageStatsChanged)
+				if err := _HoQuStorage.contract.UnpackLog(event, "StatsChanged", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
