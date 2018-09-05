@@ -6558,3 +6558,64 @@ type HoQuStorageUserAddressAddedIterator struct {
 	done bool                  // Whether the subscription completed delivering logs
 	fail error                 // Occurred error to stop iteration
 }
+
+// Next advances the iterator to the subsequent event, returning whether there
+// are any more events found. In case of a retrieval or parsing error, false is
+// returned and Error() can be queried for the exact failure.
+func (it *HoQuStorageUserAddressAddedIterator) Next() bool {
+	// If the iterator failed, stop iterating
+	if it.fail != nil {
+		return false
+	}
+	// If the iterator completed, deliver directly whatever's available
+	if it.done {
+		select {
+		case log := <-it.logs:
+			it.Event = new(HoQuStorageUserAddressAdded)
+			if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+				it.fail = err
+				return false
+			}
+			it.Event.Raw = log
+			return true
+
+		default:
+			return false
+		}
+	}
+	// Iterator still in progress, wait for either a data or an error event
+	select {
+	case log := <-it.logs:
+		it.Event = new(HoQuStorageUserAddressAdded)
+		if err := it.contract.UnpackLog(it.Event, it.event, log); err != nil {
+			it.fail = err
+			return false
+		}
+		it.Event.Raw = log
+		return true
+
+	case err := <-it.sub.Err():
+		it.done = true
+		it.fail = err
+		return it.Next()
+	}
+}
+
+// Error returns any retrieval or parsing error occurred during filtering.
+func (it *HoQuStorageUserAddressAddedIterator) Error() error {
+	return it.fail
+}
+
+// Close terminates the iteration process, releasing any pending underlying
+// resources.
+func (it *HoQuStorageUserAddressAddedIterator) Close() error {
+	it.sub.Unsubscribe()
+	return nil
+}
+
+// HoQuStorageUserAddressAdded represents a UserAddressAdded event raised by the HoQuStorage contract.
+type HoQuStorageUserAddressAdded struct {
+	OwnerAddress      common.Address
+	AdditionalAddress common.Address
+	Raw               types.Log // Blockchain specific contextual infos
+}
