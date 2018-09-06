@@ -6753,3 +6753,62 @@ type HoQuStorageUserRegistered struct {
 	Role         string
 	Raw          types.Log // Blockchain specific contextual infos
 }
+
+// FilterUserRegistered is a free log retrieval operation binding the contract event 0xf661ee1472892faaf2bb68cc6874f2759c9148b4234cac6b88f6ca362652f275.
+//
+// Solidity: event UserRegistered(ownerAddress indexed address, id bytes16, role string)
+func (_HoQuStorage *HoQuStorageFilterer) FilterUserRegistered(opts *bind.FilterOpts, ownerAddress []common.Address) (*HoQuStorageUserRegisteredIterator, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.FilterLogs(opts, "UserRegistered", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return &HoQuStorageUserRegisteredIterator{contract: _HoQuStorage.contract, event: "UserRegistered", logs: logs, sub: sub}, nil
+}
+
+// WatchUserRegistered is a free log subscription operation binding the contract event 0xf661ee1472892faaf2bb68cc6874f2759c9148b4234cac6b88f6ca362652f275.
+//
+// Solidity: event UserRegistered(ownerAddress indexed address, id bytes16, role string)
+func (_HoQuStorage *HoQuStorageFilterer) WatchUserRegistered(opts *bind.WatchOpts, sink chan<- *HoQuStorageUserRegistered, ownerAddress []common.Address) (event.Subscription, error) {
+
+	var ownerAddressRule []interface{}
+	for _, ownerAddressItem := range ownerAddress {
+		ownerAddressRule = append(ownerAddressRule, ownerAddressItem)
+	}
+
+	logs, sub, err := _HoQuStorage.contract.WatchLogs(opts, "UserRegistered", ownerAddressRule)
+	if err != nil {
+		return nil, err
+	}
+	return event.NewSubscription(func(quit <-chan struct{}) error {
+		defer sub.Unsubscribe()
+		for {
+			select {
+			case log := <-logs:
+				// New log arrived, parse the event and forward to the user
+				event := new(HoQuStorageUserRegistered)
+				if err := _HoQuStorage.contract.UnpackLog(event, "UserRegistered", log); err != nil {
+					return err
+				}
+				event.Raw = log
+
+				select {
+				case sink <- event:
+				case err := <-sub.Err():
+					return err
+				case <-quit:
+					return nil
+				}
+			case err := <-sub.Err():
+				return err
+			case <-quit:
+				return nil
+			}
+		}
+	}), nil
+}
