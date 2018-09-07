@@ -6812,3 +6812,44 @@ func (_HoQuStorage *HoQuStorageFilterer) WatchUserRegistered(opts *bind.WatchOpt
 		}
 	}), nil
 }
+
+// HoQuStorageSchemaABI is the input ABI used to generate the binding from.
+const HoQuStorageSchemaABI = "[]"
+
+// HoQuStorageSchemaBin is the compiled bytecode used for deploying new contracts.
+const HoQuStorageSchemaBin = `0x6080604052348015600f57600080fd5b50603580601d6000396000f3006080604052600080fd00a165627a7a72305820c8282cfff2cab821c02062bf28c10a97d6a88745315e2b1c90a6cb168fcc18610029`
+
+// DeployHoQuStorageSchema deploys a new Ethereum contract, binding an instance of HoQuStorageSchema to it.
+func DeployHoQuStorageSchema(auth *bind.TransactOpts, backend bind.ContractBackend) (common.Address, *types.Transaction, *HoQuStorageSchema, error) {
+	parsed, err := abi.JSON(strings.NewReader(HoQuStorageSchemaABI))
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	address, tx, contract, err := bind.DeployContract(auth, parsed, common.FromHex(HoQuStorageSchemaBin), backend)
+	if err != nil {
+		return common.Address{}, nil, nil, err
+	}
+	return address, tx, &HoQuStorageSchema{HoQuStorageSchemaCaller: HoQuStorageSchemaCaller{contract: contract}, HoQuStorageSchemaTransactor: HoQuStorageSchemaTransactor{contract: contract}, HoQuStorageSchemaFilterer: HoQuStorageSchemaFilterer{contract: contract}}, nil
+}
+
+// HoQuStorageSchema is an auto generated Go binding around an Ethereum contract.
+type HoQuStorageSchema struct {
+	HoQuStorageSchemaCaller     // Read-only binding to the contract
+	HoQuStorageSchemaTransactor // Write-only binding to the contract
+	HoQuStorageSchemaFilterer   // Log filterer for contract events
+}
+
+// HoQuStorageSchemaCaller is an auto generated read-only Go binding around an Ethereum contract.
+type HoQuStorageSchemaCaller struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// HoQuStorageSchemaTransactor is an auto generated write-only Go binding around an Ethereum contract.
+type HoQuStorageSchemaTransactor struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
+
+// HoQuStorageSchemaFilterer is an auto generated log filtering Go binding around an Ethereum contract events.
+type HoQuStorageSchemaFilterer struct {
+	contract *bind.BoundContract // Generic contract wrapper for the low level calls
+}
