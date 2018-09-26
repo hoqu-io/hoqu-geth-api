@@ -4,13 +4,17 @@ server:
   host: 0.0.0.0
   port: 8080
   url: http://geth-node.hoqu.io
+tracer:
+  enabled: false
+  jaeger:
+    host: tracer-agent.hoqu.io:6831
 geth:
   endpoint: https://rinkeby.infura.io
   nonce_gap: 15
   nonce_replacement_timeout: 180
   gas_price: 50
   gas_limit: 95000
-  tx_delay: 5
+  tx_delay: 1
   main:
     key_file: data/keys/testnet_main
     pass: key_pass_here
@@ -23,9 +27,10 @@ geth:
     claim: 0x639D010dC63c2d98aa506418a7BD7fdA470FCF28
     burner: 0x403a78940972758427e6d83017ceaa7d0bc5ac92
     conf: 0x3807b7a05Cf95574EECC38600D4eD9Dc1c5f9025
-    storage: 0x3ea7C7075C40170776C1DDaBBbE1374d9a3D5FA7
+    storage: 0x0e4416C32DAAB477a3F2C7f8FFF1f2c7153F76A1
     rater: 0xbCec7066cf3580ecdCBeA564b03dcf7B1956504F
-    platform: 0xF0C30843B9Cd6f441117D789B431e3b6Aa62c67e
+    platform: 0x1796426d98E8f863290176250c46f6399f2ea8d9
+    transactor: 0xcA1dA63f241981D9D26a74bbAc2fA0B7851763d2
   start_block:
     token: 857820
     privPlace: 857820
@@ -42,3 +47,6 @@ geth:
     banner: HOQU Platform
 security:
   sign: simple-string-by-default
+db:
+  driver: mysql
+  dsn: hoqu_api:qwerty@(localhost:3306)/hoqu_api?charset=utf8&parseTime=True&loc=Local
