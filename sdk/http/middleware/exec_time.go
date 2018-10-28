@@ -5,48 +5,46 @@ import (
 
     "github.com/sirupsen/logrus"
     "github.com/gin-gonic/gin"
+    "github.com/spf13/cast"
 )
 
-func ExecutionTime() gin.HandlerFunc {
-    return func(c *gin.Context) {
-        st := gin.Param{
-            Key:   "startTime",
-            Value: time.Now().Format(time.RFC3339Nano),
-        }
+func ExecutionTime(ctx *gin.Context) {
+    done, has := ctx.Get("done")
+    if !has {
+        return
+    }
 
-        done := make(chan bool)
+    ctx.Set("startTime", time.Now().Format(time.RFC3339Nano))
+    go tickExecTime(ctx, done.(chan bool))
+    ctx.Next()
+}
 
-        c.Set("done", done)
-        c.Params = append(c.Params, st)
-        c.Next()
-
-        go func() {
-            for {
-                select {
-                case <-done:
-                    st, err := time.Parse(time.RFC3339, c.Param("startTime"))
-                    if err == nil {
-                        logrus.Infof(
-                            "[%s] %s %s %d Executed withing %f seconds",
-                            time.Now().Format("02.01.2006 15:04:05"),
-                            c.Request.RequestURI,
-                            c.Request.Method,
-                            c.Writer.Status(),
-                            time.Now().Sub(st).Seconds(),
-                        )
-                    }
-                    return
-                case <-time.After(3 * time.Second):
-                    logrus.Warnf(
-                        "[%s] %s %s %d Executing too long",
-                        time.Now().Format("02.01.2006 15:04:05"),
-                        c.Request.RequestURI,
-                        c.Request.Method,
-                        c.Writer.Status(),
-                    )
-                    return
-                }
+func tickExecTime(ctx *gin.Context, done chan bool) {
+    for {
+        select {
+        case <-done:
+            startTime, _ := ctx.Get("startTime")
+            st, err := time.Parse(time.RFC3339, cast.ToString(startTime))
+            if err == nil {
+                logrus.Infof(
+                    "[%s] %s %s %d Executed withing %f seconds",
+                    time.Now().Format("02.01.2006 15:04:05"),
+                    ctx.Request.RequestURI,
+                    ctx.Request.Method,
+                    ctx.Writer.Status(),
+                    time.Now().Sub(st).Seconds(),
+                )
             }
-        }()
+            return
+        case <-time.After(300 * time.Second):
+            logrus.Warnf(
+                "[%s] %s %s %d Executing too long",
+                time.Now().Format("02.01.2006 15:04:05"),
+                ctx.Request.RequestURI,
+                ctx.Request.Method,
+                ctx.Writer.Status(),
+            )
+            return
+        }
     }
 }

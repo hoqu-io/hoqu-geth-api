@@ -92,11 +92,7 @@ func (w *Wallet) GetBlockHeaderByHash(hash common.Hash) (*types.Header, error) {
 // Every call to that method should end up with call to one of OnSuccessTransaction or OnFailTransaction
 // Otherwise it leads to DeadLock
 func (w *Wallet) GetTransactOpts() (*bind.TransactOpts, error) {
-    w.mutex.Lock()
-
-    logrus.Info("Delaying for ", w.nextTxDelay)
-    time.Sleep(w.nextTxDelay)
-    w.nextTxDelay = time.Duration(viper.GetInt64("geth.tx_delay")) * time.Second
+    w.Lock()
 
     gas, err := w.Connection.SuggestGasPrice(context.TODO())
     if err != nil {
@@ -160,14 +156,27 @@ func (w *Wallet) GetTransactOpts() (*bind.TransactOpts, error) {
 }
 
 func (w *Wallet) OnSuccessTransaction() {
+    defer w.Unlock()
+
     w.nonce++
-    w.mutex.Unlock()
 }
 
 func (w *Wallet) OnFailTransaction(err error) {
+    defer w.Unlock()
+
     if w.ValidateWrongNonce(err) {
         w.nonce++
     }
+}
+
+func (w *Wallet) Lock() {
+    w.mutex.Lock()
+    w.nextTxDelay = time.Duration(viper.GetInt64("geth.tx_delay")) * time.Second
+}
+
+func (w *Wallet) Unlock() {
+    logrus.Info("Delaying for ", w.nextTxDelay)
+    time.Sleep(w.nextTxDelay)
     w.mutex.Unlock()
 }
 

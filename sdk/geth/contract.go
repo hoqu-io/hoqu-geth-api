@@ -9,6 +9,7 @@ import (
     "fmt"
     "github.com/ethereum/go-ethereum"
     "math/big"
+    "regexp"
 )
 
 type Contract struct {
@@ -119,4 +120,10 @@ func (c *Contract) GetEventsByTopics(request *models.Events, fromBlock int64) ([
     }
 
     return events, nil
+}
+
+func (c *Contract) FilterString(inp string) string {
+    reg, _ := regexp.Compile("[^\\s\\tA-Za-z0-9]+")
+
+    return reg.ReplaceAllString(inp, "")
 }

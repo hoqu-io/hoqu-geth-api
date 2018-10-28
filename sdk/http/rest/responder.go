@@ -25,8 +25,8 @@ func (resp Responder) Success(content interface{}) {
             Code: ErrorNoError,
         },
     }
+    resp.context.Set("responseBody", data)
     resp.context.JSON(http.StatusOK, data)
-    resp.Done()
 }
 
 func (resp Responder) Error(message interface{}) {
@@ -49,17 +49,9 @@ func (resp Responder) ErrorWithCode(httpCode int, restCode string, message inter
             Message: message,
         },
     }
+    resp.context.Set("responseBody", data)
     resp.context.JSON(httpCode, data)
     resp.context.Abort()
-    resp.Done()
-}
-
-func (resp Responder) Done() {
-    if done, exists := resp.context.Get("done"); exists {
-        if doneChan, ok := done.(chan bool); ok {
-            close(doneChan)
-        }
-    }
 }
 
 func NewResponder(c *gin.Context) *Responder {

@@ -2,7 +2,7 @@ package models
 
 import (
     "github.com/ethereum/go-ethereum/common"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
 )
 
 // Success

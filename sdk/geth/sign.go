@@ -15,11 +15,14 @@ func EcRecover(hash, sig []byte) (common.Address, error) {
     }
     sig[64] -= 27 // Transform yellow paper V from 27/28 to 0/1
 
-    rpk, err := crypto.Ecrecover(hash, sig)
+    pubBytes, err := crypto.Ecrecover(hash, sig)
     if err != nil {
         return common.Address{}, err
     }
-    pubKey := crypto.ToECDSAPub(rpk)
+    pubKey, err := crypto.UnmarshalPubkey(pubBytes)
+    if err != nil {
+        return common.Address{}, err
+    }
     recoveredAddr := crypto.PubkeyToAddress(*pubKey)
     return recoveredAddr, nil
 }
