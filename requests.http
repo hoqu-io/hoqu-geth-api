@@ -1,0 +1,279 @@
+POST http://localhost:8888/platform/events
+Content-Type: application/json
+X-Sign: test-hash
+
+{}
+
+### ============= DEPLOY ==================
+POST http://localhost:8888/storage/deploy
+Content-Type: application/json
+X-Sign: test-hash
+
+{}
+
+###
+POST http://localhost:8888/platform/deploy
+Content-Type: application/json
+X-Sign: test-hash
+
+{}
+
+### ============== USERS ===================
+POST http://localhost:8888/platform/user/register
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "address":"0x2aD0a91C6e8199Aa4B264e417521eA6bb1636f53",
+  "pubKey":"MIICXAIBAAKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKekVb1/3j+",
+  "role":"affiliate"
+}
+
+###
+POST http://localhost:8888/platform/user/register
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "address":"0x7Eb46773851aAb328D353cAF1A7b3D418DBAEFF3",
+  "pubKey":"MIICXAIBAAKBgQCqGgsdfdzhZj6+H0qtjTkVxwTCpvKekVb1/3j+",
+  "role":"merchant"
+}
+
+###
+POST http://localhost:8888/platform/user/register
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "address":"0xb13a95F74fB189bD66545F732f715E5C7175c615",
+  "pubKey":"MIICXAIBAAKsgdgsdgsdghZj6+H0qtjTkVxwTCpvKekVb1/3j+",
+  "role":"network"
+}
+
+###
+POST http://localhost:8888/platform/user/register
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "address":"0x92b5ae365272B50495a6C21cAD35652071Ff7497",
+  "pubKey":"MIICXAjhbg23r345gf34fukO1De7zhZj6+H0qtjTkVxwTCpvKekVb1/3j+",
+  "role":"tracker"
+}
+
+###
+GET http://localhost:8888/platform/user/824f9a02-e8c5-21e8-a655-ac220b4e0f6c
+
+### ========== NET, TRACKER, OFFER ==============
+POST http://localhost:8888/platform/network/register
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "ownerId":"780dffab-e8c5-21e8-a655-ac220b4e0f6c",
+  "name":"HOQU Net",
+  "dataUrl":"https://app.hoqu.io/network/:id"
+}
+
+###
+POST http://localhost:8888/platform/tracker/register
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "ownerId":"824f9a02-e8c5-21e8-a655-ac220b4e0f6c",
+  "networkId":"ab6766e8-e8c5-21e8-a64e-ac220b4e0f6c",
+  "name":"HOQU Tracker",
+  "dataUrl":"https://app.hoqu.io/tracker/:id"
+}
+
+###
+POST http://localhost:8888/platform/offer/add
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "ownerId":"780dffab-e8c5-21e8-a655-ac220b4e0f6c",
+  "networkId":"ab6766e8-e8c5-21e8-a64e-ac220b4e0f6c",
+  "merchantId":"6fc90187-e8c5-21e8-a655-ac220b4e0f6c",
+  "payerAddress":"0x7Eb46773851aAb328D353cAF1A7b3D418DBAEFF3",
+  "name":"HOQU Test Offer",
+  "dataUrl":"https://app.hoqu.io/offer/:id",
+  "cost":"368000000000000000000"
+}
+
+###
+POST http://localhost:8888/platform/tariff_group/add
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "ownerId":"780dffab-e8c5-21e8-a655-ac220b4e0f6c",
+  "name":"Sale"
+}
+
+###
+POST http://localhost:8888/platform/offer/tariff_group
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "id":"dba72602-e8c5-21e8-a64f-ac220b4e0f6c",
+  "childId":"f2b1d498-e8c5-21e8-a654-ac220b4e0f6c"
+}
+
+###
+POST http://localhost:8888/platform/tariff_group/status
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "id":"f2b1d498-e8c5-21e8-a654-ac220b4e0f6c",
+  "status":2
+}
+
+###
+POST http://localhost:8888/platform/tariff/add
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "tariffGroupId":"f2b1d498-e8c5-21e8-a654-ac220b4e0f6c",
+  "name":"Sale percent",
+  "action":"order",
+  "calcMethod":"percent",
+  "price":"50000000000000000"
+}
+
+###
+POST http://localhost:8888/platform/tariff/add
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "tariffGroupId":"f2b1d498-e8c5-21e8-a654-ac220b4e0f6c",
+  "name":"Phone call",
+  "action":"callback",
+  "calcMethod":"fixed",
+  "price":"500000000000000000000"
+}
+
+###
+POST http://localhost:8888/platform/tariff/status
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "id":"258da530-e8c6-21e8-a654-ac220b4e0f6c",
+  "status":2
+}
+
+###
+POST http://localhost:8888/platform/offer/status
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "id":"dba72602-e8c5-21e8-a64f-ac220b4e0f6c",
+  "status":2
+}
+
+###
+GET http://localhost:8888/platform/offer/dba72602-e8c5-21e8-a64f-ac220b4e0f6c
+
+###
+GET http://localhost:8888/platform/tariff_group/a1550f06-e82d-21e8-b854-ac220b4e0f6c
+
+###
+GET http://localhost:8888/platform/tariff/c73959e1-e82d-21e8-b854-ac220b4e0f6c
+
+###
+POST http://localhost:8888/platform/offer/name
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "id":"8d5d3c61-c3fe-21e8-8d4f-1c1b0dfde84a",
+  "name":"HOQU Test Offer 11"
+}
+
+### =========== AD CAMPAIGNS, LEADS ================
+POST http://localhost:8888/platform/ad/add
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "ownerId":"634822f6-e8c5-21e8-a655-ac220b4e0f6c",
+  "offerId":"dba72602-e8c5-21e8-a64f-ac220b4e0f6c",
+  "beneficiaryAddress":"0x2aD0a91C6e8199Aa4B264e417521eA6bb1636f53"
+}
+
+###
+GET http://localhost:8888/platform/ad/55862910-e8c6-21e8-a641-ac220b4e0f6c
+
+###
+POST http://localhost:8888/platform/ad/status
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "id":"55862910-e8c6-21e8-a641-ac220b4e0f6c",
+  "status":2
+}
+
+###
+POST http://localhost:8888/platform/lead/add
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "adId":"55862910-e8c6-21e8-a641-ac220b4e0f6c",
+  "trackerId":"bd543b80-e8c5-21e8-a654-ac220b4e0f6c",
+  "meta":"{\"test\": \"data\"}",
+  "dataUrl":"https://app.hoqu.io/lead/:id",
+  "price":"355000000000000000000"
+}
+
+###
+POST http://localhost:8888/platform/lead/get
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "adId":"55862910-e8c6-21e8-a641-ac220b4e0f6c",
+  "id":"d4482d64-e8c6-21e8-a64c-ac220b4e0f6c"
+}
+
+###
+POST http://localhost:8888/platform/lead/price
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "adId":"55862910-e8c6-21e8-a641-ac220b4e0f6c",
+  "id":"d4482d64-e8c6-21e8-a64c-ac220b4e0f6c",
+  "price":"333000000000000000000"
+}
+
+###
+POST http://localhost:8888/platform/lead/status
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "adId":"55862910-e8c6-21e8-a641-ac220b4e0f6c",
+  "id":"d4482d64-e8c6-21e8-a64c-ac220b4e0f6c",
+  "status":2
+}
+
+###
+POST http://localhost:8888/metamask/challenge
+Content-Type: application/json
+X-Sign: test-hash
+
+{
+  "address":"0x7Eb46773851aAb328D353cAF1A7b3D418DBAEFF3"
+}
+
+###

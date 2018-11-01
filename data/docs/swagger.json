@@ -22,7 +22,7 @@
       "name": "MIT",
       "url": "http://opensource.org/licenses/MIT"
     },
-    "version": "0.4.1"
+    "version": "1.1.7"
   },
   "basePath": "/",
   "paths": {
@@ -135,6 +135,40 @@
         "responses": {
           "200": {
             "$ref": "#/responses/GetBlockSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/hqx/allowance": {
+      "get": {
+        "description": "Get allowance given by owner of HQX tokens to spender.",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "platform"
+        ],
+        "summary": "Get HQX allowance",
+        "operationId": "getHqxAllowance",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AllowanceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/GetAllowanceSuccessResponse"
           },
           "400": {
             "$ref": "#/responses/RestErrorResponse"
@@ -284,23 +318,16 @@
           "application/json"
         ],
         "tags": [
-          "ads"
+          "ad_campaigns"
         ],
-        "summary": "Get Ad by ID.",
-        "operationId": "getAd",
-        "parameters": [
-          {
-            "type": "string",
-            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
-            "x-go-name": "Id",
-            "description": "an ID of the requested entity",
-            "name": "id",
-            "in": "query"
-          }
-        ],
+        "summary": "Get AdCampaign by ID.",
+        "operationId": "getAdCampaign",
         "responses": {
           "200": {
-            "$ref": "#/responses/AdDataResponse"
+            "description": "AdCampaignSuccessData",
+            "schema": {
+              "$ref": "#/definitions/AdCampaignSuccessData"
+            }
           },
           "400": {
             "$ref": "#/responses/RestErrorResponse"
@@ -318,23 +345,13 @@
           "application/json"
         ],
         "tags": [
-          "ads"
+          "ad_campaigns"
         ],
-        "summary": "Add Ad.",
-        "operationId": "addAd",
-        "parameters": [
-          {
-            "x-go-name": "Body",
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/AddAdRequest"
-            }
-          }
-        ],
+        "summary": "Add AdCampaign.",
+        "operationId": "addAdCampaign",
         "responses": {
           "200": {
-            "$ref": "#/responses/AddSuccessResponse"
+            "$ref": "#/responses/AddAdCampaignSuccessResponse"
           },
           "400": {
             "$ref": "#/responses/RestErrorResponse"
@@ -351,20 +368,10 @@
           "application/json"
         ],
         "tags": [
-          "ads"
+          "ad_campaigns"
         ],
-        "summary": "Set Ad Status.",
-        "operationId": "setAdStatus",
-        "parameters": [
-          {
-            "x-go-name": "Body",
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "$ref": "#/definitions/SetStatusRequest"
-            }
-          }
-        ],
+        "summary": "Set AdCampaign Status.",
+        "operationId": "setAdCampaignStatus",
         "responses": {
           "200": {
             "$ref": "#/responses/TxSuccessResponse"
@@ -714,6 +721,39 @@
         }
       }
     },
+    "/platform/lead/price": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "leads"
+        ],
+        "summary": "Set Lead Price.",
+        "operationId": "setLeadPrice",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetLeadPriceRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
     "/platform/lead/status": {
       "post": {
         "consumes": [
@@ -767,6 +807,39 @@
             "in": "body",
             "schema": {
               "$ref": "#/definitions/TransactLeadRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/lead/url": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "leads"
+        ],
+        "summary": "Set Lead Data URL.",
+        "operationId": "setLeadDataUrl",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetLeadDataUrlRequest"
             }
           }
         ],
@@ -892,7 +965,7 @@
             "type": "string",
             "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
             "x-go-name": "Id",
-            "description": "an ID of the requested entity",
+            "description": "id of entity",
             "name": "id",
             "in": "query"
           }
@@ -940,6 +1013,72 @@
         }
       }
     },
+    "/platform/offer/name": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "offers"
+        ],
+        "summary": "Set Offer Name.",
+        "operationId": "setOfferName",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetNameRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/offer/payer_address": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "offers"
+        ],
+        "summary": "Set Offer Payer Address.",
+        "operationId": "setOfferPayerAddress",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/SetOfferPayerAddressRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
     "/platform/offer/status": {
       "post": {
         "consumes": [
@@ -960,6 +1099,39 @@
             "in": "body",
             "schema": {
               "$ref": "#/definitions/SetStatusRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/offer/tariff_group": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "offers"
+        ],
+        "summary": "Add Offer tariff.",
+        "operationId": "addOfferTariffGroup",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/IdWithChildIdRequest"
             }
           }
         ],
@@ -996,6 +1168,168 @@
         "responses": {
           "200": {
             "$ref": "#/responses/StatsDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tariff/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "tariffs"
+        ],
+        "summary": "Get Tariff by ID.",
+        "operationId": "getTariff",
+        "parameters": [
+          {
+            "type": "string",
+            "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
+            "x-go-name": "Id",
+            "description": "id of entity",
+            "name": "id",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TariffDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tariff/add": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "tariffs"
+        ],
+        "summary": "Add Tariff.",
+        "operationId": "addTariff",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddTariffRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tariff/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "tariffs"
+        ],
+        "summary": "Set Tariff Status.",
+        "operationId": "setTariffStatus",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tariff_group/:id": {
+      "get": {
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "tariff_groups"
+        ],
+        "summary": "Get TariffGroup by ID.",
+        "operationId": "getTariffGroup",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TariffGroupDataResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tariff_group/add": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "tariff_groups"
+        ],
+        "summary": "Add TariffGroup.",
+        "operationId": "addTariffGroup",
+        "parameters": [
+          {
+            "x-go-name": "Body",
+            "name": "body",
+            "in": "body",
+            "schema": {
+              "$ref": "#/definitions/AddTariffGroupRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/responses/AddSuccessResponse"
+          },
+          "400": {
+            "$ref": "#/responses/RestErrorResponse"
+          }
+        }
+      }
+    },
+    "/platform/tariff_group/status": {
+      "post": {
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "tags": [
+          "tariff_groups"
+        ],
+        "summary": "Set TariffGroup Status.",
+        "operationId": "setTariffGroupStatus",
+        "responses": {
+          "200": {
+            "$ref": "#/responses/TxSuccessResponse"
           },
           "400": {
             "$ref": "#/responses/RestErrorResponse"
@@ -1115,7 +1449,7 @@
             "type": "string",
             "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b",
             "x-go-name": "Id",
-            "description": "an ID of the requested entity",
+            "description": "id of entity",
             "name": "id",
             "in": "query"
           }
@@ -1232,7 +1566,7 @@
     }
   },
   "definitions": {
-    "AdData": {
+    "AdCampaign": {
       "description": "Ad Model",
       "type": "object",
       "properties": {
@@ -1255,10 +1589,15 @@
           "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
         },
         "createdAt": {
-          "description": "unix timestamp",
+          "description": "ISO8601 datetime format",
           "type": "string",
+          "format": "date-time",
           "x-go-name": "CreatedAt",
-          "example": "1518957879"
+          "example": "2009-11-13T10:39:35Z"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
         },
         "offerId": {
           "description": "the ID of an Offer the entity is linked to",
@@ -1282,9 +1621,18 @@
           "$ref": "#/definitions/Status"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
-    "AddAdRequest": {
+    "AdCampaignSuccessData": {
+      "type": "object",
+      "properties": {
+        "Ad": {
+          "$ref": "#/definitions/AdCampaign"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "AddAdCampaignRequest": {
       "type": "object",
       "properties": {
         "beneficiaryAddress": {
@@ -1306,7 +1654,7 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "AddIdentificationRequest": {
       "type": "object",
@@ -1336,7 +1684,7 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "AddKycReportRequest": {
       "type": "object",
@@ -1365,7 +1713,7 @@
           "x-go-name": "Meta"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "AddLeadIntermediaryRequest": {
       "type": "object",
@@ -1396,7 +1744,7 @@
           "example": 0.045
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "AddLeadRequest": {
       "type": "object",
@@ -1431,17 +1779,11 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "AddOfferRequest": {
       "type": "object",
       "properties": {
-        "cost": {
-          "description": "the cost of the leads in HQX",
-          "type": "string",
-          "x-go-name": "Cost",
-          "example": "25000000000000000"
-        },
         "dataUrl": {
           "description": "the offer full data URL",
           "type": "string",
@@ -1477,7 +1819,58 @@
           "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "AddTariffGroupRequest": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "description": "the name of the TariffGroup",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "ownerId": {
+          "description": "the ID of an User owned the entity",
+          "type": "string",
+          "x-go-name": "OwnerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "AddTariffRequest": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "description": "the name of the action when tariff is applied",
+          "type": "string",
+          "x-go-name": "Action"
+        },
+        "calcMethod": {
+          "description": "the method of lead price calculation",
+          "type": "string",
+          "x-go-name": "CalcMethod",
+          "example": "percent|fixed"
+        },
+        "name": {
+          "description": "the name of the Tariff",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "price": {
+          "description": "the price of a lead calculated by the tariff in wei\nor the percent value",
+          "type": "string",
+          "x-go-name": "Price",
+          "example": "25000000000000000"
+        },
+        "tariffGroupId": {
+          "description": "the ID of a Tariff Group",
+          "type": "string",
+          "x-go-name": "TariffGroupId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "AddUserAddressRequest": {
       "type": "object",
@@ -1495,7 +1888,7 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "Address": {
       "type": "array",
@@ -1517,7 +1910,25 @@
           "x-go-name": "Addresses"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "AllowanceRequest": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "description": "Ethereum address of token's owner",
+          "type": "string",
+          "x-go-name": "Owner",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "spender": {
+          "description": "Ethereum address of a spender",
+          "type": "string",
+          "x-go-name": "Spender",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "BlockNonce": {
       "description": "A BlockNonce is a 64-bit hash which proves (combined with the\nmix-hash) that a sufficient amount of computation has been carried\nout on a block.",
@@ -1580,7 +1991,49 @@
           "$ref": "#/definitions/Status"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "CreateAdCampaignResponseData": {
+      "type": "object",
+      "properties": {
+        "contractAddress": {
+          "description": "Ethereum address of the contract serving the ad campaign",
+          "type": "string",
+          "x-go-name": "ContractAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        },
+        "id": {
+          "description": "id of created entity",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "tx": {
+          "description": "Ethereum transaction hash",
+          "type": "string",
+          "x-go-name": "Tx",
+          "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "CreateResponseData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "id of created entity",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "tx": {
+          "description": "Ethereum transaction hash",
+          "type": "string",
+          "x-go-name": "Tx",
+          "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "Events": {
       "type": "object",
@@ -1686,6 +2139,24 @@
       },
       "x-go-package": "hoqu-geth-api/vendor/github.com/ethereum/go-ethereum/core/types"
     },
+    "IdWithChildIdRequest": {
+      "type": "object",
+      "properties": {
+        "childId": {
+          "description": "id of child entity",
+          "type": "string",
+          "x-go-name": "ChildId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "id": {
+          "description": "id of entity",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
     "IdentificationData": {
       "description": "User Model",
       "type": "object",
@@ -1728,7 +2199,7 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "Int": {
       "description": "The zero value for an Int represents the value 0.",
@@ -1736,7 +2207,7 @@
       "title": "An Int represents a signed multi-precision integer.",
       "x-go-package": "math/big"
     },
-    "LeadData": {
+    "Lead": {
       "description": "Lead Model",
       "type": "object",
       "properties": {
@@ -1747,15 +2218,20 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         },
         "createdAt": {
-          "description": "unix timestamp",
+          "description": "ISO8601 datetime format",
           "type": "string",
+          "format": "date-time",
           "x-go-name": "CreatedAt",
-          "example": "1518957879"
+          "example": "2009-11-13T10:39:35Z"
         },
         "dataUrl": {
           "description": "the full lead data URL",
           "type": "string",
           "x-go-name": "DataUrl"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
         },
         "intermediaries": {
           "description": "a list of ethAddress -\u003e percent of all money receivers (except owner itself)",
@@ -1788,7 +2264,16 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "LeadSuccessData": {
+      "type": "object",
+      "properties": {
+        "Lead": {
+          "$ref": "#/definitions/Lead"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "NetworkData": {
       "description": "Network Model",
@@ -1820,28 +2305,27 @@
           "$ref": "#/definitions/Status"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
-    "OfferData": {
+    "Offer": {
       "description": "Offer Model",
       "type": "object",
       "properties": {
-        "cost": {
-          "description": "the cost of the leads in HQX",
-          "type": "string",
-          "x-go-name": "Cost",
-          "example": "25000000000000000"
-        },
         "createdAt": {
-          "description": "unix timestamp",
+          "description": "ISO8601 datetime format",
           "type": "string",
+          "format": "date-time",
           "x-go-name": "CreatedAt",
-          "example": "1518957879"
+          "example": "2009-11-13T10:39:35Z"
         },
         "dataUrl": {
           "description": "the offer full data URL",
           "type": "string",
           "x-go-name": "DataUrl"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
         },
         "merchantId": {
           "description": "the ID of a Merchant owning this offer",
@@ -1874,9 +2358,27 @@
         },
         "status": {
           "$ref": "#/definitions/Status"
+        },
+        "tariffGroups": {
+          "description": "the cost of the leads in HQX",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "TariffGroups",
+          "example": "[\"a6fdb91a-149d-11e8-b642-0ed5f89f718b\"]"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "OfferSuccessData": {
+      "type": "object",
+      "properties": {
+        "Offer": {
+          "$ref": "#/definitions/Offer"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "RecoverRequest": {
       "type": "object",
@@ -1917,7 +2419,7 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "RegisterNetworkRequest": {
       "type": "object",
@@ -1940,7 +2442,7 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "RegisterTrackerRequest": {
       "type": "object",
@@ -1968,7 +2470,7 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "RegisterUserRequest": {
       "type": "object",
@@ -1991,7 +2493,53 @@
           "example": "affiliate"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "SetLeadDataUrlRequest": {
+      "type": "object",
+      "properties": {
+        "adId": {
+          "description": "the ID of an Ad Campaign",
+          "type": "string",
+          "x-go-name": "AdId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "dataUrl": {
+          "type": "string",
+          "x-go-name": "DataUrl",
+          "example": "3"
+        },
+        "id": {
+          "description": "id of the lead",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "SetLeadPriceRequest": {
+      "type": "object",
+      "properties": {
+        "adId": {
+          "description": "the ID of an Ad Campaign",
+          "type": "string",
+          "x-go-name": "AdId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "id": {
+          "description": "id of the lead",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "price": {
+          "type": "string",
+          "x-go-name": "Price",
+          "example": "3"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "SetLeadStatusRequest": {
       "type": "object",
@@ -2012,7 +2560,42 @@
           "$ref": "#/definitions/Status"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "SetNameRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "id of entity",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "name": {
+          "type": "string",
+          "x-go-name": "Name",
+          "example": "HoQu LLC"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "SetOfferPayerAddressRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "description": "id of the offer",
+          "type": "string",
+          "x-go-name": "Id",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "payerAddress": {
+          "description": "Ethereum address of the Offer payer (who will pay for leads)",
+          "type": "string",
+          "x-go-name": "PayerAddress",
+          "example": "0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "SetStatusRequest": {
       "type": "object",
@@ -2027,17 +2610,31 @@
           "$ref": "#/definitions/Status"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "StatsData": {
       "description": "Stats Model",
       "type": "object",
       "properties": {
-        "contragents": {
-          "description": "number of related contragents",
+        "alfa": {
+          "description": "reserved stat for future needs",
           "type": "integer",
           "format": "uint64",
-          "x-go-name": "Contragents",
+          "x-go-name": "Alfa",
+          "example": 500
+        },
+        "beta": {
+          "description": "reserved stat for future needs",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Beta",
+          "example": 245
+        },
+        "members": {
+          "description": "number of related members",
+          "type": "integer",
+          "format": "uint64",
+          "x-go-name": "Members",
           "example": 34
         },
         "rating": {
@@ -2046,20 +2643,6 @@
           "format": "uint64",
           "x-go-name": "Rating",
           "example": 650
-        },
-        "stat1": {
-          "description": "reserved stat for future needs",
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Stat1",
-          "example": 500
-        },
-        "stat2": {
-          "description": "reserved stat for future needs",
-          "type": "integer",
-          "format": "uint64",
-          "x-go-name": "Stat2",
-          "example": 245
         },
         "status": {
           "$ref": "#/definitions/Status"
@@ -2072,13 +2655,121 @@
           "example": 542332
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "Status": {
       "description": "status, one of 0:NotExists, 1:Created, 2:Pending, 3:Active, 4:Done, 5:Declined",
       "type": "integer",
       "format": "uint8",
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "Tariff": {
+      "description": "Tariff Model",
+      "type": "object",
+      "properties": {
+        "action": {
+          "description": "the name of the action when tariff is applied",
+          "type": "string",
+          "x-go-name": "Action"
+        },
+        "calcMethod": {
+          "description": "the method of lead price calculation",
+          "type": "string",
+          "x-go-name": "CalcMethod",
+          "example": "percent|fixed"
+        },
+        "createdAt": {
+          "description": "ISO8601 datetime format",
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt",
+          "example": "2009-11-13T10:39:35Z"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "description": "the name of the Tariff",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "price": {
+          "description": "the price of a lead calculated by the tariff in wei\nor the percent value",
+          "type": "string",
+          "x-go-name": "Price",
+          "example": "25000000000000000"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "tariffGroupId": {
+          "description": "the ID of a Tariff Group",
+          "type": "string",
+          "x-go-name": "TariffGroupId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "TariffGroup": {
+      "description": "TariffGroup Model",
+      "type": "object",
+      "properties": {
+        "createdAt": {
+          "description": "ISO8601 datetime format",
+          "type": "string",
+          "format": "date-time",
+          "x-go-name": "CreatedAt",
+          "example": "2009-11-13T10:39:35Z"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
+        },
+        "name": {
+          "description": "the name of the TariffGroup",
+          "type": "string",
+          "x-go-name": "Name"
+        },
+        "ownerId": {
+          "description": "the ID of an User owned the entity",
+          "type": "string",
+          "x-go-name": "OwnerId",
+          "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
+        },
+        "status": {
+          "$ref": "#/definitions/Status"
+        },
+        "tariffs": {
+          "description": "a list of tariff ids related to the offer",
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "x-go-name": "Tariffs",
+          "example": "[\"a6fdb91a-149d-11e8-b642-0ed5f89f718b\"]"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "TariffGroupSuccessData": {
+      "type": "object",
+      "properties": {
+        "TariffGroup": {
+          "$ref": "#/definitions/TariffGroup"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "TariffSuccessData": {
+      "type": "object",
+      "properties": {
+        "Tariff": {
+          "$ref": "#/definitions/Tariff"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "TrackerData": {
       "description": "Tracker Model",
@@ -2116,7 +2807,7 @@
           "$ref": "#/definitions/Status"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
     },
     "TransactLeadRequest": {
       "type": "object",
@@ -2134,7 +2825,19 @@
           "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "TxSuccessData": {
+      "type": "object",
+      "properties": {
+        "tx": {
+          "description": "Ethereum transaction hash",
+          "type": "string",
+          "x-go-name": "Tx",
+          "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     },
     "TypedParam": {
       "description": "TypedParam Model",
@@ -2161,7 +2864,7 @@
       },
       "x-go-package": "hoqu-geth-api/sdk/geth/metamask"
     },
-    "UserData": {
+    "User": {
       "description": "User Model",
       "type": "object",
       "properties": {
@@ -2171,10 +2874,15 @@
           "example": "[\"0xED2F74E1fb73b775E6e35720869Ae7A7f4D755aD\"]"
         },
         "createdAt": {
-          "description": "unix timestamp",
+          "description": "ISO8601 datetime format",
           "type": "string",
+          "format": "date-time",
           "x-go-name": "CreatedAt",
-          "example": "1518957879"
+          "example": "2009-11-13T10:39:35Z"
+        },
+        "id": {
+          "type": "string",
+          "x-go-name": "ID"
         },
         "kycLevel": {
           "description": "Higher the level more trust this user has from other participants",
@@ -2198,7 +2906,16 @@
           "$ref": "#/definitions/Status"
         }
       },
-      "x-go-package": "hoqu-geth-api/geth/models"
+      "x-go-package": "hoqu-geth-api/models"
+    },
+    "UserSuccessData": {
+      "type": "object",
+      "properties": {
+        "User": {
+          "$ref": "#/definitions/User"
+        }
+      },
+      "x-go-package": "hoqu-geth-api/models"
     }
   },
   "responses": {
@@ -2208,13 +2925,18 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "properties": {
-              "Ad": {
-                "$ref": "#/definitions/AdData"
-              }
-            },
-            "x-go-name": "Data"
+            "$ref": "#/definitions/AdCampaignSuccessData"
+          }
+        }
+      }
+    },
+    "AddAdCampaignSuccessResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/definitions/CreateAdCampaignResponseData"
           }
         }
       }
@@ -2225,22 +2947,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "properties": {
-              "id": {
-                "description": "id of created entity",
-                "type": "string",
-                "x-go-name": "Id",
-                "example": "a6fdb91a-149d-11e8-b642-0ed5f89f718b"
-              },
-              "tx": {
-                "description": "Ethereum transaction hash",
-                "type": "string",
-                "x-go-name": "Tx",
-                "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
-              }
-            },
-            "x-go-name": "Data"
+            "$ref": "#/definitions/CreateResponseData"
           }
         }
       }
@@ -2361,6 +3068,26 @@
         }
       }
     },
+    "GetAllowanceSuccessResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "allowance": {
+                "description": "HQX allowance in wei",
+                "type": "string",
+                "x-go-name": "Allowance",
+                "example": "42340000000000000000"
+              }
+            },
+            "x-go-name": "Data"
+          }
+        }
+      }
+    },
     "GetBalanceSuccessResponse": {
       "description": "Success",
       "schema": {
@@ -2468,13 +3195,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "properties": {
-              "Lead": {
-                "$ref": "#/definitions/LeadData"
-              }
-            },
-            "x-go-name": "Data"
+            "$ref": "#/definitions/LeadSuccessData"
           }
         }
       }
@@ -2502,13 +3223,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "properties": {
-              "Offer": {
-                "$ref": "#/definitions/OfferData"
-              }
-            },
-            "x-go-name": "Data"
+            "$ref": "#/definitions/OfferSuccessData"
           }
         }
       }
@@ -2576,6 +3291,28 @@
         }
       }
     },
+    "TariffDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/definitions/TariffSuccessData"
+          }
+        }
+      }
+    },
+    "TariffGroupDataResponse": {
+      "description": "Success",
+      "schema": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "$ref": "#/definitions/TariffGroupSuccessData"
+          }
+        }
+      }
+    },
     "TrackerDataResponse": {
       "description": "Success",
       "schema": {
@@ -2599,16 +3336,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "properties": {
-              "tx": {
-                "description": "Ethereum transaction hash",
-                "type": "string",
-                "x-go-name": "Tx",
-                "example": "0x23682ef776bfb465433e8f6a6e84eab71f039f039e86933aeca20ee46d01d576"
-              }
-            },
-            "x-go-name": "Data"
+            "$ref": "#/definitions/TxSuccessData"
           }
         }
       }
@@ -2619,13 +3347,7 @@
         "type": "object",
         "properties": {
           "data": {
-            "type": "object",
-            "properties": {
-              "User": {
-                "$ref": "#/definitions/UserData"
-              }
-            },
-            "x-go-name": "Data"
+            "$ref": "#/definitions/UserSuccessData"
           }
         }
       }
