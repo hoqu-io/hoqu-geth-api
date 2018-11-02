@@ -29,7 +29,7 @@ func InitBurner() error {
 
     burn = &Burner{
         Contract: c,
-        Burner:     s,
+        Burner:   s,
     }
 
     return nil
@@ -81,4 +81,3 @@ func (s *Burner) BurnFrom(addr string, tokens string) (common.Hash, error) {
 
     return tx.Hash(), nil
 }
-

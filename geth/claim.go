@@ -8,7 +8,7 @@ import (
     "fmt"
     "math/big"
     "hoqu-geth-api/sdk/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/sirupsen/logrus"
@@ -21,13 +21,13 @@ var claim *Claim
 
 type Claim struct {
     *geth.Contract
-    Claim *contract.HoQuClaim
-    batchLimit int
+    Claim        *contract.HoQuClaim
+    batchLimit   int
     batchTimeout time.Duration
-    batchStart time.Time
-    batch map[common.Address]*big.Int
-    BatchId uuid.UUID
-    mutex *sync.Mutex
+    batchStart   time.Time
+    batch        map[common.Address]*big.Int
+    BatchId      uuid.UUID
+    mutex        *sync.Mutex
 }
 
 func InitClaim() error {
@@ -45,13 +45,13 @@ func InitClaim() error {
     }
 
     claim = &Claim{
-        Contract: c,
-        Claim:     s,
-        batchLimit: viper.GetInt("geth.claim.batch_limit"),
+        Contract:     c,
+        Claim:        s,
+        batchLimit:   viper.GetInt("geth.claim.batch_limit"),
         batchTimeout: time.Duration(viper.GetInt("geth.claim.batch_timeout")) * time.Minute,
-        batchStart: time.Now().Add(24 * 365 * time.Hour),
-        BatchId: u,
-        mutex: &sync.Mutex{},
+        batchStart:   time.Now().Add(24 * 365 * time.Hour),
+        BatchId:      u,
+        mutex:        &sync.Mutex{},
     }
 
     return nil
@@ -123,7 +123,7 @@ func (c *Claim) ClaimAddress(addr string, amount string) (common.Hash, error) {
 
     l1 := len(c.batch)
     if l1 >= c.batchLimit || c.batchStart.Add(c.batchTimeout).Before(time.Now()) {
-        defer func(){
+        defer func() {
             c.batch = nil
             c.batchStart = time.Now().Add(24 * 365 * time.Hour)
             c.BatchId, _ = uuid.NewV4()

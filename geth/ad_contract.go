@@ -7,8 +7,9 @@ import (
     "fmt"
     "hoqu-geth-api/sdk/geth"
     "github.com/ethereum/go-ethereum/core/types"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "github.com/satori/go.uuid"
+    "time"
 )
 
 type HoQuAdCampaign struct {
@@ -26,7 +27,7 @@ func GetAdCampaign(addr string) (*HoQuAdCampaign, error) {
     }
 
     return &HoQuAdCampaign{
-        Contract:   c,
+        Contract:       c,
         HoQuAdCampaign: s,
     }, nil
 }
@@ -47,11 +48,18 @@ func DeployAdCampaign(params *models.DeployAdContractRequest) (*common.Address, 
         return nil, nil, err
     }
 
+    w := GetHoquPlatform().Contract.Wallet
+    opts, err := w.GetTransactOpts()
+    if err != nil {
+        w.OnFailTransaction(err)
+        return nil, nil, err
+    }
+
     address, tx, _, err := ad.DeployHoQuAdCampaign(
-        GetHoquPlatform().Contract.Wallet.Account,
-        GetHoquPlatform().Contract.Wallet.Connection,
+        opts,
+        w.Connection,
         GetHoQuConfig().Address,
-        GetToken().Address,
+        GetHoQuTransactor().Address,
         GetHoQuStorage().Address,
         GetHoQuRater().Address,
         aid,
@@ -61,8 +69,11 @@ func DeployAdCampaign(params *models.DeployAdContractRequest) (*common.Address, 
         common.HexToAddress(params.PayerAddress),
     )
     if err != nil {
+        w.OnFailTransaction(err)
         return nil, nil, fmt.Errorf("failed to deploy HoQuAdCampaign contract: %v", err)
     }
+
+    w.OnSuccessTransaction()
     return &address, tx, nil
 }
 
@@ -101,7 +112,7 @@ func (adc *HoQuAdCampaign) PayerAddress() (common.Address, error) {
     return adc.HoQuAdCampaign.PayerAddress(nil)
 }
 
-func (adc *HoQuAdCampaign) GetLead(id string) (*models.LeadData, error) {
+func (adc *HoQuAdCampaign) GetLead(id string) (*models.Lead, error) {
     lid, err := uuid.FromString(id)
     if err != nil {
         return nil, err
@@ -135,8 +146,9 @@ func (adc *HoQuAdCampaign) GetLead(id string) (*models.LeadData, error) {
         return nil, err
     }
 
-    leadData := &models.LeadData{
-        CreatedAt:      lead.CreatedAt.String(),
+    leadData := &models.Lead{
+        ID: id,
+        CreatedAt:      time.Unix(lead.CreatedAt.Int64(), 0),
         AdId:           aid.String(),
         TrackerId:      tid.String(),
         Intermediaries: intermediaries,
