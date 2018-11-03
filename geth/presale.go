@@ -8,7 +8,7 @@ import (
     "fmt"
     "math/big"
     "hoqu-geth-api/sdk/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"
@@ -144,7 +144,7 @@ func (p *Presale) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, 
     for key, event := range events {
         switch {
         case event.Name == "TokenBought" || event.Name == "TokenAdded" || event.Name == "TokenToppedUp" ||
-        event.Name == "TokenSubtracted":
+            event.Name == "TokenSubtracted":
             events[key].Args = models.TokenAddedEventArgs{
                 Address:     common.BytesToAddress(event.RawArgs[0]).String(),
                 TokenAmount: common.BytesToHash(event.RawArgs[1]).Big().String(),

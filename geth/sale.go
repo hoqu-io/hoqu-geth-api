@@ -8,7 +8,7 @@ import (
     "fmt"
     "math/big"
     "hoqu-geth-api/sdk/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
     "github.com/ethereum/go-ethereum/accounts/abi/bind"

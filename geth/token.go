@@ -10,7 +10,7 @@ import (
     "hoqu-geth-api/sdk/geth"
     "github.com/ethereum/go-ethereum/core/types"
     sdkModels "hoqu-geth-api/sdk/models"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
 )
 
 var token *Token
@@ -62,6 +62,10 @@ func (t *Token) Balance(addr string) (*big.Int, error) {
     return t.Token.BalanceOf(nil, common.HexToAddress(addr))
 }
 
+func (t *Token) Allowance(owner string, spender string) (*big.Int, error) {
+    return t.Token.Allowance(nil, common.HexToAddress(owner), common.HexToAddress(spender))
+}
+
 func (t *Token) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, error) {
     events, err := t.GetEventsByTopics(
         request,
@@ -79,15 +83,15 @@ func (t *Token) Events(request *sdkModels.Events) ([]sdkModels.ContractEvent, er
         switch {
         case event.Name == "Transfer":
             event.Args = models.TokenTransferEventArgs{
-                From: addr.String(),
-                To: common.BytesToAddress(event.RawArgs[1]).String(),
+                From:   addr.String(),
+                To:     common.BytesToAddress(event.RawArgs[1]).String(),
                 Amount: common.BytesToHash(event.RawArgs[2]).Big().String(),
             }
         case event.Name == "Approval":
             event.Args = models.TokenApprovalEventArgs{
-                Owner: addr.String(),
+                Owner:   addr.String(),
                 Spender: common.BytesToAddress(event.RawArgs[1]).String(),
-                Amount: common.BytesToHash(event.RawArgs[2]).Big().String(),
+                Amount:  common.BytesToHash(event.RawArgs[2]).Big().String(),
             }
         default:
             return nil, fmt.Errorf("unknown event type: %s", event.Name)

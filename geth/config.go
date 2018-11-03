@@ -1,13 +1,13 @@
 package geth
 
 import (
-    "hoqu-geth-api/contract/platform"
+    platform "hoqu-geth-api/contract/config"
     "github.com/ethereum/go-ethereum/common"
     "github.com/spf13/viper"
     "errors"
     "fmt"
     "hoqu-geth-api/sdk/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     sdkModels "hoqu-geth-api/sdk/models"
     "github.com/ethereum/go-ethereum/core/types"
 )
@@ -41,14 +41,23 @@ func GetHoQuConfig() *HoQuConfig {
 }
 
 func (s *HoQuConfig) Deploy(params *models.ConfigDeployParams) (*common.Address, *types.Transaction, error) {
+    opts, err := s.Wallet.GetTransactOpts()
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+        return nil, nil, err
+    }
+
     address, tx, _, err := platform.DeployHoQuConfig(
-        s.Wallet.Account,
+        opts,
         s.Wallet.Connection,
         common.HexToAddress(params.CommissionWallet),
     )
     if err != nil {
+        s.Wallet.OnFailTransaction(err)
         return nil, nil, fmt.Errorf("failed to deploy HoQuConfig contract: %v", err)
     }
+
+    s.Wallet.OnSuccessTransaction()
     return &address, tx, nil
 }
 
@@ -65,7 +74,7 @@ func (s *HoQuConfig) Events(request *sdkModels.Events) ([]sdkModels.ContractEven
         switch {
         case event.Name == "SystemOwnerAdded":
             events[key].Args = models.SystemOwnerAddedEventArgs{
-                NewOwner:      common.BytesToAddress(event.RawArgs[0]).String(),
+                NewOwner: common.BytesToAddress(event.RawArgs[0]).String(),
             }
         case event.Name == "SystemOwnerChanged":
             events[key].Args = models.SystemOwnerChangedEventArgs{
@@ -95,10 +104,18 @@ func (s *HoQuConfig) Events(request *sdkModels.Events) ([]sdkModels.ContractEven
 }
 
 func (s *HoQuConfig) AddOwner(addr string) (common.Hash, error) {
-    tx, err := s.HoQuConfig.AddOwner(s.Wallet.Account, common.HexToAddress(addr))
+    opts, err := s.Wallet.GetTransactOpts()
     if err != nil {
+        s.Wallet.OnFailTransaction(err)
         return common.Hash{}, err
     }
 
+    tx, err := s.HoQuConfig.AddOwner(opts, common.HexToAddress(addr))
+    if err != nil {
+        s.Wallet.OnFailTransaction(err)
+        return common.Hash{}, err
+    }
+
+    s.Wallet.OnSuccessTransaction()
     return tx.Hash(), nil
 }

@@ -27,7 +27,7 @@ func initHoQuRater() error {
     }
 
     r = &HoQuRater{
-        Contract:   c,
+        Contract:  c,
         HoQuRater: s,
     }
 
@@ -50,4 +50,3 @@ func (s *HoQuRater) Deploy() (*common.Address, *types.Transaction, error) {
     }
     return &address, tx, nil
 }
-
