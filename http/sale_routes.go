@@ -4,13 +4,13 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "hoqu-geth-api/sdk/http/middleware"
     "math/big"
     sdkModels "hoqu-geth-api/sdk/models"
 )
 
-func initSaleRoutes(router *gin.Engine) {
+func InitSaleRoutes(router *gin.Engine) {
     sale := router.Group("/sale")
     {
         sale.POST("/deploy", middleware.SignRequired(), postDeploySaleAction)

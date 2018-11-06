@@ -4,11 +4,11 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     sdkGeth "hoqu-geth-api/sdk/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "github.com/ethereum/go-ethereum/common"
 )
 
-func initWalletRoutes(router *gin.Engine) {
+func InitWalletRoutes(router *gin.Engine) {
     eth := router.Group("/eth")
     {
         eth.GET("/balance/:address", getEthBalanceAction)

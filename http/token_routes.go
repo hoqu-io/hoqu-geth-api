@@ -4,17 +4,18 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/geth"
     "hoqu-geth-api/sdk/http/rest"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "hoqu-geth-api/sdk/http/middleware"
     sdkModels "hoqu-geth-api/sdk/models"
 )
 
-func initTokenRoutes(router *gin.Engine) {
+func InitTokenRoutes(router *gin.Engine) {
     hqx := router.Group("/hqx")
     {
         hqx.POST("/deploy", middleware.SignRequired(), postDeployTokenAction)
         hqx.GET("/balance/:address", getHqxBalanceAction)
         hqx.POST("/balances", getHqxBalancesAction)
+        hqx.POST("/allowance", getHqxAllowanceAction)
         hqx.POST("/transactions", postTokenTransactionsAction)
         hqx.POST("/holders", postTokenHoldersAction)
     }
@@ -65,6 +66,39 @@ func getHqxBalanceAction(c *gin.Context) {
     rest.NewResponder(c).Success(gin.H{
         "address": addr,
         "balance": bal.String(),
+    })
+}
+
+// swagger:route GET /hqx/allowance platform getHqxAllowance
+//
+// Get HQX allowance
+//
+// Get allowance given by owner of HQX tokens to spender.
+//
+// Consumes:
+// - application/json
+// Produces:
+// - application/json
+// Responses:
+//   200: GetAllowanceSuccessResponse
+//   400: RestErrorResponse
+//
+func getHqxAllowanceAction(c *gin.Context) {
+    request := &models.AllowanceRequest{}
+    err := c.BindJSON(request)
+    if err != nil {
+        rest.NewResponder(c).ErrorValidation(err.Error())
+        return
+    }
+
+    allowance, err := geth.GetToken().Allowance(request.Owner, request.Spender)
+    if err != nil {
+        rest.NewResponder(c).Error(err.Error())
+        return
+    }
+
+    rest.NewResponder(c).Success(gin.H{
+        "allowance": allowance.String(),
     })
 }
 

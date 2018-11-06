@@ -7,15 +7,15 @@ import (
     "hoqu-geth-api/sdk/http/middleware"
 )
 
-func InitHoQuRaterRoutes(router *gin.Engine) {
-    config := router.Group("/rater", middleware.SignRequired())
+func InitHoQuTransactorRoutes(router *gin.Engine) {
+    config := router.Group("/transactor", middleware.SignRequired())
     {
-        config.POST("/deploy", postDeployHoQuRaterAction)
+        config.POST("/deploy", postDeployHoQuTransactorAction)
     }
 }
 
-func postDeployHoQuRaterAction(c *gin.Context) {
-    addr, tx, err := geth.GetHoQuRater().Deploy()
+func postDeployHoQuTransactorAction(c *gin.Context) {
+    addr, tx, err := geth.GetHoQuTransactor().Deploy()
     if err != nil {
         rest.NewResponder(c).Error(err.Error())
         return

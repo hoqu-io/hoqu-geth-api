@@ -4,7 +4,7 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "hoqu-geth-api/sdk/http/middleware"
 )
 

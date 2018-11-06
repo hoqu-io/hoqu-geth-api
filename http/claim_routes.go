@@ -4,13 +4,13 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "hoqu-geth-api/sdk/http/middleware"
     "github.com/ethereum/go-ethereum/common"
     models2 "hoqu-geth-api/sdk/models"
 )
 
-func initClaimRoutes(router *gin.Engine) {
+func InitClaimRoutes(router *gin.Engine) {
     claim := router.Group("/claim")
     {
         claim.POST("/deploy", middleware.SignRequired(), postDeployClaimAction)

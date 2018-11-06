@@ -1,0 +1,40 @@
+user -- test affiliate:
+0x2aD0a91C6e8199Aa4B264e417521eA6bb1636f53
+634822f6-e8c5-21e8-a655-ac220b4e0f6c
+
+user -- test merchant
+0x7Eb46773851aAb328D353cAF1A7b3D418DBAEFF3
+6fc90187-e8c5-21e8-a655-ac220b4e0f6c
+
+user -- test network
+0xb13a95F74fB189bD66545F732f715E5C7175c615
+780dffab-e8c5-21e8-a655-ac220b4e0f6c
+
+user -- test tracker
+0x92b5ae365272B50495a6C21cAD35652071Ff7497
+824f9a02-e8c5-21e8-a655-ac220b4e0f6c
+
+network -- HOQU Net
+ab6766e8-e8c5-21e8-a64e-ac220b4e0f6c
+
+tracker -- HOQU Tracker
+bd543b80-e8c5-21e8-a654-ac220b4e0f6c
+
+offer -- HOQU Test offer
+dba72602-e8c5-21e8-a64f-ac220b4e0f6c
+368 HQX
+    |--> tariff group
+    f2b1d498-e8c5-21e8-a654-ac220b4e0f6c
+        |--> tariff
+        1963d23f-e8c6-21e8-a654-ac220b4e0f6c
+        order: 0.05 percent
+        |--> tariff
+        258da530-e8c6-21e8-a654-ac220b4e0f6c
+        callback: 500 HQX fixed
+
+ad campaign -- for HOQU Test offer
+55862910-e8c6-21e8-a641-ac220b4e0f6c
+    |--> contract
+    0x7EedA95E5f655CC7440F91340e1F7f7958133fFF
+        |--> lead
+        d4482d64-e8c6-21e8-a64c-ac220b4e0f6c

@@ -4,11 +4,11 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "hoqu-geth-api/sdk/http/middleware"
 )
 
-func initBurnerRoutes(router *gin.Engine) {
+func InitBurnerRoutes(router *gin.Engine) {
     claim := router.Group("/burner")
     {
         claim.POST("/deploy", middleware.SignRequired(), postDeployBurnerAction)

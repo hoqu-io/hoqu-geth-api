@@ -7,7 +7,7 @@ import (
     "hoqu-geth-api/sdk/http/middleware"
 )
 
-func initHoQuStorageRoutes(router *gin.Engine) {
+func InitHoQuStorageRoutes(router *gin.Engine) {
     config := router.Group("/storage", middleware.SignRequired())
     {
         config.POST("/deploy", postDeployHoQuStorageAction)

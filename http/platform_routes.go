@@ -7,22 +7,30 @@ import (
     "hoqu-geth-api/sdk/http/middleware"
     "hoqu-geth-api/http/platform"
     models2 "hoqu-geth-api/sdk/models"
+    "hoqu-geth-api/offer"
+    "hoqu-geth-api/tariff"
+    "hoqu-geth-api/ad_campaign"
+    "hoqu-geth-api/lead"
+    "hoqu-geth-api/user"
+    "hoqu-geth-api/tariff_group"
 )
 
-func initHoquPlatformRoutes(router *gin.Engine) {
+func InitHoquPlatformRoutes(router *gin.Engine) {
     r := router.Group("/platform")
     {
         r.POST("/deploy", middleware.SignRequired(), postDeployHoquPlatformAction)
         r.POST("/events", postPlatformEventsAction)
-        platform.InitUserRoutes(r)
+        user.InitUserRoutes(r)
         platform.InitIdentificationRoutes(r)
         platform.InitStatsRoutes(r)
         platform.InitCompanyRoutes(r)
         platform.InitNetworkRoutes(r)
         platform.InitTrackerRoutes(r)
-        platform.InitOfferRoutes(r)
-        platform.InitAdRoutes(r)
-        platform.InitLeadRoutes(r)
+        offer.InitOfferRoutes(r)
+        ad_campaign.InitAdCampaignRoutes(r)
+        lead.InitLeadRoutes(r)
+        tariff.InitTariffRoutes(r)
+        tariff_group.InitTariffGroupRoutes(r)
     }
 }
 

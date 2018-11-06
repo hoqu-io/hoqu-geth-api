@@ -4,11 +4,11 @@ import (
     "github.com/gin-gonic/gin"
     "hoqu-geth-api/sdk/http/rest"
     "hoqu-geth-api/geth"
-    "hoqu-geth-api/geth/models"
+    "hoqu-geth-api/models"
     "hoqu-geth-api/sdk/http/middleware"
 )
 
-func initHoQuConfigRoutes(router *gin.Engine) {
+func InitHoQuConfigRoutes(router *gin.Engine) {
     config := router.Group("/config", middleware.SignRequired())
     {
         config.POST("/deploy", postDeployHoQuConfigAction)
